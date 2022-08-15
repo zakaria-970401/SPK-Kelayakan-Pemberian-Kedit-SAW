@@ -19,9 +19,9 @@
                                         <label for="nama_nasabah" class="col-form-label">Nama Nasabah</label>
                                     </div>
                                     <div class="col-auto">
-                                        <input type="text" id="nama_nasabah" name="nama_nasabah" class="form-control"
-                                            aria-describedby="passwordHelpInline" required placeholder="Silahkan Di isi"
-                                            autofocus="on">
+                                        <input type="text" id="nama_nasabah" name="nama_nasabah"
+                                            class="form-control namaNasabahValue" aria-describedby="passwordHelpInline"
+                                            required placeholder="Silahkan Di isi" autofocus="on">
                                     </div>
                                 </div>
                                 <div class="row g-3 mt-4 align-items-center">
@@ -81,7 +81,7 @@
                                     </div>
                                     <div class="col-auto">
                                         <input type="file" id="file_ktp" name="file_ktp" class="form-control"
-                                            aria-describedby="passwordHelpInline" required placeholder="Silahkan Di isi"
+                                            aria-describedby="passwordHelpInline" placeholder="Silahkan Di isi"
                                             autofocus="on">
                                         <small class="form-text text-muted">*.jpg .png .pdf</small>
                                     </div>
@@ -91,7 +91,7 @@
                                         style=""><i class="fas fa-check-circle"></i> Lanjutkan</button>
                                 </div>
                             </div>
-                            <div class="col-sm-12 viewSaw hidden">
+                            <div class="col-sm-12 viewSaw ">
                                 <hr>
                                 @foreach ($kriteria as $item)
                                     @php
@@ -113,11 +113,33 @@
                             </div>
                         </div>
                         <div class="float-end">
-                            <button type="submit" class="btn btn-primary btnKelayakan hidden" style=""><i
+                            <button type="submit" class="btn btn-primary btnKelayakan " style=""><i
                                     class="fas fa-check-circle"></i> Check Kelayakan</button>
                             <span class="spinner-border spinner-border-sm align-middle ms-2 hidden"></span></span>
                         </div>
                     </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modal-result" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+            aria-hidden="true" data-bs-keyboard="false" data-bs-backdrop="static">
+            <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title text-center">FORM HASIL PERHITUNGAN SAW</h5>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-sm-12 appendResult">
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <a href="javascript:void(0)" onclick="location.reload()" class="btn btn-secondary"> Batal</a>
+                        <button type="button" class="btn btn-primary">Save</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -146,7 +168,132 @@
                 processData: false,
                 dataType: "json",
                 success: function(response) {
-                    console.log(response.data);
+                    if (response.data.keputusan <= 20) {
+                        var style = 'bg-danger';
+                    } else if (response.data.keputusan <= 40) {
+                        var style = 'bg-warning text-white';
+                    } else if (response.data.keputusan <= 60) {
+                        var style = 'bg-warning text-white';
+                    } else if (response.data.keputusan <= 80) {
+                        var style = 'bg-info text-white';
+                    } else if (response.data.keputusan <= 100) {
+                        var style = 'bg-info text-white';
+                    }
+                    $('#modal-result').modal('show');
+                    $('.appendResult').html("");
+                    $('.appendResult').append(`
+                    <div class="table-responsive">
+                        <table class="table table-row-dashed table-row-gray-200 align-middle gs-0 gy-4 border-3">
+                            <thead>
+                                <tr class="border-0 text-dark text-center">
+                                    @for ($i = 1; $i <= 5; $i++)
+                                        <th>C{{$i}}</th>
+                                    @endfor
+                                </tr>
+                            </thead>
+                            <tbody class="">
+                                <tr class="bodyKriteria  text-center"></tr>
+                            </tbody>
+                            <tfooter class="">
+                                <tr class="footerBodyKriteria  text-center"></tr>
+                            </tfooter>
+                        </table>
+                        <hr>
+                        <table class="table table-row-dashed table-row-gray-200 align-middle gs-0 gy-4 border-3">
+                            <thead>
+                                <tr class="border-0 text-center">
+                                    <th>NAMA NASABAH</th>
+                                    @for ($i = 1; $i <= 5; $i++)
+                                    <th>C{{$i}}</th>
+                                    @endfor
+                                </tr>
+                            </thead>
+                            <tbody class="text-center">
+                              <tr class="beforeNormalisasi"></tr>
+                            </tbody>
+                        </table>
+                        <hr>
+                        <h4 class="text-dark text-center mt-4"><b>TABLE NORMALISASI</b></h4>
+                            <table class="table table-row-dashed table-row-gray-200 align-middle gs-0 gy-4 border-3">
+                            <thead>
+                                <tr class="border-0 text-center">
+                                    <th>NAMA NASABAH</th>
+                                    @for ($i = 1; $i <= 5; $i++)
+                                    <th>C{{$i}}</th>
+                                    @endfor
+                                    <th>MAX CRIPS</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-center">
+                              <tr class="afterNormalisasi"></tr>
+                            </tbody>
+                            <tfooter class="text-center">
+                                <tr class="footerAfterNormalisasi text-center">
+                                </tr>
+                            </tfooter>
+                        </table>
+                        <hr>
+                        <h4 class="text-dark text-center mt-4"><b>TABLE PERANGKINGAN(R x W) </b></h4>
+                         <table class="table table-row-dashed table-row-gray-200 align-middle gs-0 gy-4 border-3">
+                            <thead>
+                                <tr class="border-0" style="zoom: 150%;">
+                                    <th class="${style}">PERHITUNGAN</th>
+                                    <th class="${style}">HASIL SCORE</th>
+                                    <th class="${style}">KEPUTUSAN</th>
+                                </tr>
+                            </thead>
+                            <tbody class="">
+                              <tr class="" style="align-items-center">
+                                    <td style="zoom: 150%;" class="perangkingan  ${style}"></td>
+                                    <td style="zoom: 150%;" class="${style}">${response.data.keputusan}</td>
+                                    <td style="zoom: 150%;" class="${style}">${response.data.texthasil}</td>
+                              </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    `);
+                    $('.beforeNormalisasi').append(`
+                        <td scope="row">` + $('.namaNasabahValue').val() + `</td>
+                        `);
+                    for (var index = 1; index <= 5; index++) {
+                        $('.beforeNormalisasi').append(`
+                            <td>${response.data.before['C'+index+'_text'].sub}</td>
+                            `);
+                    }
+                    $.each(response.data.kriteria, function(index, value) {
+                        $('.bodyKriteria').append(`
+                            <td scope="row">` + value.kriteria + `</td>
+                        `);
+                        $('.footerBodyKriteria').append(`
+                            <td scope="row">BOBOT : ` + value.bobot + `</td>
+                        `);
+                        
+                    });
+
+                    $('.afterNormalisasi').append(`
+                        <td scope="row">` + $('.namaNasabahValue').val() + `</td>
+                        `);
+                    $.each(response.data.normalisasi, function(index, value) {
+                        $('.afterNormalisasi').append(`
+                        <td>${value}</td>
+                        `);
+                    });
+                    $('.afterNormalisasi').append(`
+                        <td scope="row">${response.data.max_crips}</td>
+                    `);
+                    $('.footerAfterNormalisasi').append(`
+                        <td scope="row">-</td>
+                    `);
+                     for (var index = 1; index <= 5; index++) {
+                        console.log(response.data.kriteria[index].bobot);
+                        $('.footerAfterNormalisasi').append(`
+                            <td>${response.data.normalisasi['C'+index]}/${response.data.max_crips} = ${response.data.hasil_bagi_crips['C'+index]}</td>
+                            `);
+                        $('.perangkingan').append(`
+                            <td class="text-center">${response.data.hasil_bagi_crips['C'+index]} * ${response.data.bobot_value['C'+index]}, </td>
+                        `);
+                    }
+                    // console.log(response.data);
                 },
                 error: function(error) {
                     Swal.fire({
@@ -159,5 +306,8 @@
                 }
             });
         });
+        function submitKelayakan(){
+            
+        }
     </script>
 @endsection

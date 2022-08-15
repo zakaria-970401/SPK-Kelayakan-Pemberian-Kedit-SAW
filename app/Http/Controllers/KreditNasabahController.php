@@ -27,7 +27,7 @@ class KreditNasabahController extends Controller
             $request->status_pekerjaan,
         ];
 
-        $before = [
+        $normalisasi = [
             // 'nama_nasabah' => $request->nama_nasabah,
             'C1'       => $request->kedisiplinan_kredit,
             'C2'       => $request->penghasilan_bulanan,
@@ -35,11 +35,30 @@ class KreditNasabahController extends Controller
             'C4'       => $request->status_tempat_tinggal,
             'C5'       => $request->status_pekerjaan,
         ];
-        $max_crips = max($crips);
-        // dd($max_crips);
 
-        foreach ($before as $key => $value) {
+        $sub_text = DB::table('master_subkriteria')->get();
+        $kriteria = DB::table('master_kriteria')->get();
+        // $bobot_value = $kriteria->toArray();
+        $before = [
+            'C1_text'       => $sub_text->where('kode', 'C1')->where('nilai', $request->kedisiplinan_kredit)->first(),
+            'C2_text'       => $sub_text->where('kode', 'C2')->where('nilai', $request->penghasilan_bulanan)->first(),
+            'C3_text'       => $sub_text->where('kode', 'C3')->where('nilai', $request->jaminan_kredit)->first(),
+            'C4_text'       => $sub_text->where('kode', 'C4')->where('nilai', $request->status_tempat_tinggal)->first(),
+            'C5_text'       => $sub_text->where('kode', 'C5')->where('nilai', $request->status_pekerjaan)->first(),
+        ];
+        $bobot_value = [
+            'C1'       => $kriteria->where('kode', 'C1')->value('bobot'),
+            'C2'       => $kriteria->where('kode', 'C2')->value('bobot'),
+            'C3'       => $kriteria->where('kode', 'C3')->value('bobot'),
+            'C4'       => $kriteria->where('kode', 'C4')->value('bobot'),
+            'C5'       => $kriteria->where('kode', 'C5')->value('bobot'),
+        ];
+        # code...
+        $max_crips = max($crips);
+
+        foreach ($normalisasi as $key => $value) {
             $bobot = DB::table('master_kriteria')->where('kode', $key)->value('bobot');
+            $hasil_bagi_crips[$key] = $value / $max_crips;
             $hasil[$key] = (int)$value / (int)$max_crips * (int)$bobot;
         }
         $keputusan = (int)array_sum($hasil);
@@ -51,7 +70,7 @@ class KreditNasabahController extends Controller
         } else if ($keputusan <= 60) {
             $texthasil = 'Cukup';
         } else if ($keputusan <= 80) {
-            $keputusan = 'Layak';
+            $texthasil = 'Layak';
         } else if ($keputusan <= 100) {
             $texthasil = 'Sangat Layak';
         }
@@ -59,8 +78,12 @@ class KreditNasabahController extends Controller
             'data' => [
                 'keputusan' => $keputusan,
                 'texthasil' => $texthasil,
-                'kriteria' => $before,
+                'normalisasi' => $normalisasi,
                 'max_crips' => $max_crips,
+                'before' => $before,
+                'kriteria' => $kriteria,
+                'bobot_value' => $bobot_value,
+                'hasil_bagi_crips' => $hasil_bagi_crips,
             ],
         ]);
     }
