@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use DB;
 use Illuminate\Support\Facades\DB as FacadesDB;
 use Session;
+use carbon\Carbon;
 
 class KreditNasabahController extends Controller
 {
@@ -88,36 +89,75 @@ class KreditNasabahController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function postKredit(Request $request)
     {
-        //
+        // dd($request->all());
+        $nominal = explode(',', $request->nominal);
+        $nominal = implode('', $nominal);
+        $nominal = (int) $nominal;
+
+        $kriteria_nilai = explode(',', $request->value);
+
+        //insert data
+        DB::table('master_nasabah')->insert([
+            'nama' => $request->nama_nasabah,
+            'jenis_kelamin' => $request->jenis_kelamin,
+            'usia' => $request->usia,
+            'status_pernikahan' => $request->status_pernikahan,
+            'alamat_nasabah' => $request->alamat_nasabah,
+            'nama_ibu' => $request->nama_ibu,
+            'c1' => $kriteria_nilai[0],
+            'c2' => $kriteria_nilai[1],
+            'c3' => $kriteria_nilai[2],
+            'c4' => $kriteria_nilai[3],
+            'c5' => $kriteria_nilai[4],
+        ]);
+
+        $id_nasabah = DB::table('master_nasabah')->orderBy('id', 'DESC')->value('id');
+
+        $jatuh_tempo = [];
+        for ($i = 1; $i <= (int)$request->pariode; $i++) {
+            $jatuh_tempo[] = Carbon::now()->addMonths($i);
+        }
+        foreach ($jatuh_tempo as $key => $value) {
+            DB::table('transaksi_nasabah')->insert([
+                'id_nasabah' => $id_nasabah == null ? 1 : $id_nasabah,
+                'jangka_kredit' => (int)$request->pariode,
+                'nominal_kredit' => $nominal,
+                'jatuh_tempo' => $value,
+                'pembayaran_ke' => $key + 1,
+                'created_at' => date('Y-m-d H:i:s'),
+                'created_by' => Auth::user()->name,
+            ]);
+        }
+
+
+        Session::flash('success', 'Data berhasil Disimpan, Silahkan Print Out Surat Keterangan Kredit');
+        return redirect('nasabah/printout/' . $id_nasabah);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function checkNominal($nominal)
     {
-        //
+        $nominal = explode(',', $nominal);
+        $nominal = implode('', $nominal);
+        $nominal = (int) $nominal;
+        if ($nominal == 0) {
+            return response()->json([
+                'status' => 'format',
+            ]);
+        } else {
+            return response()->json([
+                'status' => 'ok',
+            ]);
+        }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
+    public function printout($id_nasabah)
     {
-        //
+        $transaksi = DB::table('transaksi_nasabah')->where('id_nasabah', $id_nasabah)->get();
+        $nasabah = DB::table('master_nasabah')->where('id', $id_nasabah)->first();
+
+        return view('nasabah.printout', compact('transaksi', 'nasabah'));
     }
 
     /**
