@@ -80,7 +80,7 @@
                                     pertanggung
                                     jawabkan sebagaimana mestinya. Adapun rincian pembayaran tersebut:
                                 </p>
-                                <table class="table table-bordered">
+                                <table id="table table-bordered">
                                     <thead>
                                         <tr class="text-center">
                                             <th>NO</th>
@@ -111,7 +111,7 @@
                             <div class="col-sm-6">
                                 <br>
                                 <br>
-                                <table class="table table-bordered">
+                                <table id="table table-bordered">
                                     <thead>
                                         <tr class="text-center">
                                             <th>NAMA PETUGAS</th>
@@ -125,7 +125,7 @@
                                 </table>
                             </div>
                             <div class="col-sm-6">
-                                <table class="table table-bordered">
+                                <table id="table table-bordered">
                                     <thead>
                                         <tr class="text-center">
                                             <th>Bekasi, {{ date('d M Y') }}</th>

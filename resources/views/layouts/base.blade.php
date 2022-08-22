@@ -22,6 +22,35 @@
         .hidden {
             display: none;
         }
+
+        #table {
+            font-family: Arial, Helvetica, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        #table td,
+        #table th {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        #table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        #table tr:hover {
+            background-color: #ddd;
+        }
+
+        #table th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            text-align: center;
+            background-color: #079b65;
+            color: white;
+        }
     </style>
 </head>
 <!--end::Head-->
@@ -227,6 +256,62 @@
                     </div>
             </div>
             </form>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal-permintaan-hapus" tabindex="-1" role="dialog"
+        aria-labelledby="modelTitleId" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">LIST PERMINTAAN HAPUS</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    @php
+                        $list = DB::table('master_nasabah')
+                            ->select('transaksi_nasabah.nominal_kredit', 'transaksi_nasabah.jangka_kredit', 'master_nasabah.nama', 'master_nasabah.id', 'master_nasabah.deleted_by')
+                            ->join('transaksi_nasabah', 'transaksi_nasabah.id_nasabah', '=', 'master_nasabah.id')
+                            ->where('master_nasabah.status', 99)
+                            ->groupBy('transaksi_nasabah.id_nasabah')
+                            ->get();
+                    @endphp
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <table id="table">
+                                <thead>
+                                    <tr>
+                                        <th>No.</th>
+                                        <th>#</th>
+                                        <th>Permintaan By</th>
+                                        <th>Nama Nasabah</th>
+                                        <th>Nominal Kredit</th>
+                                        <th>Jangka Kredit</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($list as $item)
+                                        <tr>
+                                            <td scope="row">{{ $loop->iteration }}</td>
+                                            <td><a class="btn btn-lg btn-info"
+                                                    href="{{ url('nasabah/approvePermintaanHapus/' . $item->id) }}"><i
+                                                        class="fas fa-check-circle"></i> Approve</a></td>
+                                            <td scope="row">{{ $item->deleted_by }}</td>
+                                            <td scope="row">{{ $item->nama }}</td>
+                                            <td scope="row">Rp.
+                                                {{ number_format($item->nominal_kredit, 0, ',', '.') }}</td>
+                                            <td scope="row">{{ $item->jangka_kredit }} BULAN</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
         </div>
     </div>
 

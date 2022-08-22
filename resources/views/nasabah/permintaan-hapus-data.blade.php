@@ -1,9 +1,14 @@
 @extends('layouts.base')
-@section('title', 'List Jatuh Tempo')
+@section('title', 'List Permintaan Hapus Data')
 @section('content')
     <div class="row">
         <div class="col-sm-12">
             <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        Data Yang Baru Saja Dibuat {{ Auth::user()->nama }}
+                    </div>
+                </div>
                 <div class="card-body">
                     <div class="table responsive">
                         <table id="table" width="100%" cellspacing="0">
@@ -13,36 +18,25 @@
                                     <th>#</th>
                                     <th>Nama Nasabah</th>
                                     <th>Nominal Kredit</th>
-                                    <th>Pembayaran Kredit</th>
-                                    <th>Pembayaran Ke</th>
-                                    <th>Jatuh Tempo</th>
+                                    <th>Jangka Kredit</th>
                                     <th>Status</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($data as $item)
-                                    @foreach ($item as $list)
-                                        <tr class="text-center">
-                                            <td>{{ $loop->iteration }}</td>
-                                            <td>
-                                                <a href="#" onclick="Pembayaran('{{ $list->id }}')"
-                                                    class="btn btn-primary btn-sm"><i
-                                                        class="fas fa-check-double"></i>Pembayaran</a>
-                                            </td>
-                                            <td>{{ $list->nama }}</td>
-                                            <td scope="row">
-                                                Rp.
-                                                {{ number_format($list->nominal_kredit, 0, ',', '.') }}
-                                            </td>
-                                            <td>
-                                                Rp.
-                                                {{ number_format($list->nominal_kredit / $jangka_kredit, 0, ',', '.') }}
-                                            </td>
-                                            <td>{{ $list->pembayaran_ke }}</td>
-                                            <td>{{ \Carbon\Carbon::parse($list->jatuh_tempo)->format('d M Y') }}</td>
-                                            <td><span class="badge badge-warning"> BELUM DI BAYAR</span></td>
-                                        </tr>
-                                    @endforeach
+                                    <tr class="text-center">
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td><a class="btn btn-sm btn-dark"
+                                                href="{{ url('nasabah/sendPermintaanHapus/' . $item->id) }}"><i
+                                                    class="fas fa-trash-alt"></i> Kirim Permintaan</a>
+                                        </td>
+                                        <td>{{ $item->nama }}</td>
+                                        <td>Rp.
+                                            {{ number_format($item->nominal_kredit, 0, ',', '.') }}
+                                        </td>
+                                        <td>{{ $item->jangka_kredit }} BULAN</td>
+                                        <td><span class="badge badge-info"> Aktif</span></td>
+                                    </tr>
                                 @endforeach
                             </tbody>
                         </table>

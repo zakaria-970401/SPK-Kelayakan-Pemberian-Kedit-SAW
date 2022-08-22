@@ -55,7 +55,7 @@ class KreditNasabahController extends Controller
             'C4'       => $kriteria->where('kode', 'C4')->value('bobot'),
             'C5'       => $kriteria->where('kode', 'C5')->value('bobot'),
         ];
-        # code...
+        // dd($bobot_value);
         $max_crips = max($crips);
 
         foreach ($normalisasi as $key => $value) {
@@ -248,5 +248,109 @@ class KreditNasabahController extends Controller
         return response()->json([
             'data' => $data,
         ]);
+    }
+
+    public function simulasiKelayakan()
+    {
+        $kriteria = DB::table('master_kriteria')->get();
+        $sub = DB::table('master_subkriteria')->orderBy('nilai', 'ASC')->get();
+        return view('nasabah.simulasi-kelayakan-kredit', compact('kriteria', 'sub'));
+    }
+
+    public function resultSimulasiKelayakan(Request $request)
+    {
+        // dd($request->all());
+        $sub_text = DB::table('master_subkriteria')->get();
+        $kriteria = DB::table('master_kriteria')->get();
+        for ($i = 0; $i < count($request->nama_nasabah); $i++) {
+            $crips[] = [
+                $request->kedisiplinan_kredit[$i],
+                $request->penghasilan_bulanan[$i],
+                $request->jaminan_kredit[$i],
+                $request->status_tempat_tinggal[$i],
+                $request->status_pekerjaan[$i],
+            ];
+
+            $normalisasi_before[] = [
+                'C1'       => $request->kedisiplinan_kredit[$i],
+                'C2'       => $request->penghasilan_bulanan[$i],
+                'C3'       => $request->jaminan_kredit[$i],
+                'C4'       => $request->status_tempat_tinggal[$i],
+                'C5'       => $request->status_pekerjaan[$i],
+            ];
+        }
+
+        foreach ($normalisasi_before as $key => $value) {
+            foreach ($value as $_key => $_value) {
+                $normalisasi[$_key][] = $_value;
+            }
+        }
+        $normalisasi = collect($normalisasi);
+        $max_crips = collect([]);
+        $nama_nasabah = collect([]);
+        $sub_text_after = collect([]);
+
+        foreach ($crips as $key => $value) {
+            $max_crips = $max_crips->merge($value);
+        }
+        $max_crips = max($max_crips->toArray());
+
+        foreach ($request->nama_nasabah as $key => $value) {
+            $nama_nasabah = $nama_nasabah->merge($value);
+            for ($i = 1; $i <= 5; $i++) {
+                $hasil[] = $normalisasi['C' . $i][$key] * $kriteria->where('kode', 'C' . $i)->first()->bobot;
+            }
+            $hasil_hitungan[] = array_sum($hasil);
+        }
+
+        $rankings = array_unique($hasil_hitungan);
+        rsort($rankings);
+        $rank = array();
+        foreach ($rankings as $value) {
+            $rankedValue = array();
+            $rankedValue['value'] = $value;
+            $rankedValue['rank'] = array_search($value, $rankings) + 1;
+            $rank[] = $rankedValue;
+        }
+        $rank = collect($rank);
+        // dd($rank);
+        return view('nasabah.result-simulasi-kelayakan-kredit', compact('kriteria', 'sub_text', 'nama_nasabah', 'normalisasi', 'max_crips', 'rank'));
+    }
+
+    public function permintaanHapusData()
+    {
+        $data =  DB::table('transaksi_nasabah')
+            ->select(
+                'transaksi_nasabah.nominal_kredit',
+                'transaksi_nasabah.jangka_kredit',
+                'master_nasabah.nama',
+                'master_nasabah.id',
+            )
+            ->join('master_nasabah', 'transaksi_nasabah.id_nasabah', '=', 'master_nasabah.id')
+            ->where('created_by', Auth::user()->name)
+            ->whereDate('created_at', Carbon::today())
+            ->groupBy('id_nasabah')
+            ->where('master_nasabah.status', 1)
+            ->get();
+        return view('nasabah.permintaan-hapus-data', compact('data'));
+    }
+
+    public function sendPermintaanHapus($id)
+    {
+        //update status
+        DB::table('transaksi_nasabah')->where('id_nasabah', $id)->update(['status' => 99]);
+        DB::table('master_nasabah')->where('id', $id)->update(['status' => 99, 'deleted_by' => Auth::user()->name]);
+
+        Session::flash('success', 'Permintaan Hapus Data Berhasil Dikirim');
+        return back();
+    }
+
+    public function approvePermintaanHapus($id)
+    {
+        //update status
+        DB::table('transaksi_nasabah')->where('id_nasabah', $id)->delete();
+        DB::table('master_nasabah')->where('id', $id)->delete();
+        Session::flash('success', 'Permintaan Hapus Data Berhasil Disetujui');
+        return back();
     }
 }

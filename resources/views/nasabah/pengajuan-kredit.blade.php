@@ -337,7 +337,7 @@ table, th, td {
                     $('.appendResult').html("");
                     $('.appendResult').append(`
                         <div class="table-responsive">
-                            <table class="table">
+                            <table id="table">
                                 <thead>
                                     <tr class="border-0 text-dark text-center">
                                         @for ($i = 1; $i <= 5; $i++)
@@ -353,7 +353,7 @@ table, th, td {
                                 </tfooter>
                             </table>
                             <hr>
-                            <table class="table">
+                            <table id="table">
                                 <thead>
                                     <tr class="border-0 text-center">
                                         <th>NAMA NASABAH</th>
@@ -368,7 +368,7 @@ table, th, td {
                             </table>
                             <hr>
                             <h4 class="text-dark text-center mt-4"><b>TABLE NORMALISASI</b></h4>
-                                <table class="table">
+                                <table id="table">
                                 <thead>
                                     <tr class="border-0 text-center">
                                         <th>NAMA NASABAH</th>
@@ -388,7 +388,7 @@ table, th, td {
                             </table>
                             <hr>
                             <h4 class="text-dark text-center mt-4"><b>TABLE PERANGKINGAN(R x W) </b></h4>
-                            <table class="table">
+                            <table id="table">
                                 <thead>
                                     <tr class="border-0" style="zoom: 150%;">
                                         <th class="${style}">PERHITUNGAN</th>
@@ -397,7 +397,7 @@ table, th, td {
                                     </tr>
                                 </thead>
                                 <tbody class="">
-                                <tr class="" style="align-items-center">
+                                <tr class="">
                                         <td style="zoom: 150%;" class="perangkingan  ${style}"></td>
                                         <td style="zoom: 150%;" class="${style}">${response.data.keputusan}</td>
                                         <td style="zoom: 150%;" class="${style}">${response.data.texthasil}</td>
@@ -409,9 +409,10 @@ table, th, td {
                     $('.beforeNormalisasi').append(`
                         <td scope="row">` + $('.namaNasabahValue').val() + `</td>
                         `);
-                    for (var index = 1; index <= 5; index++) {
+                    for (var index = 0; index < 5; index++) {
+                        var i = index + 1;
                         $('.beforeNormalisasi').append(`
-                            <td>${response.data.before['C'+index+'_text'].sub}</td>
+                            <td>${response.data.before['C'+i+'_text'].sub}</td>
                             `);
                     }
                     $.each(response.data.kriteria, function(index, value) {
@@ -438,13 +439,13 @@ table, th, td {
                     $('.footerAfterNormalisasi').append(`
                         <td scope="row">-</td>
                     `);
-                     for (var index = 1; index <= 5; index++) {
-                        console.log(response.data.kriteria[index].bobot);
+                     for (var index = 0; index < 5; index++) {
+                        var i = index + 1;
                         $('.footerAfterNormalisasi').append(`
-                            <td>${response.data.normalisasi['C'+index]}/${response.data.max_crips} = ${response.data.hasil_bagi_crips['C'+index]}</td>
+                            <td>${response.data.normalisasi['C'+i]}/${response.data.max_crips} = ${response.data.hasil_bagi_crips['C'+i]}</td>
                             `);
                         $('.perangkingan').append(`
-                            <td class="text-center">${response.data.hasil_bagi_crips['C'+index]} * ${response.data.bobot_value['C'+index]}, </td>
+                            <td class="text-center">${response.data.hasil_bagi_crips['C'+i]} * ${response.data.bobot_value['C'+i]}, </td>
                         `);
                     }
                     // console.log(response.data);

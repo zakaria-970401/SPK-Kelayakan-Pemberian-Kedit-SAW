@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <title>Login Page</title>
     <meta charset="utf-8" />
@@ -25,7 +26,7 @@
                         <a href="#" class="py-9 mb-5">
                             <img alt="Logo" src="assets/media/logos/logo.png" class="h-60px" />
                         </a>
-                        <h1 class="fw-bolder fs-2qx pb-5 pb-md-10" style="color: #08974B;">SITEM INFORMASI KREDIT
+                        <h1 class="fw-bolder fs-2qx pb-5 pb-md-10" style="color: #08974B;">SISTEM INFORMASI KREDIT
                             NASABAH</h1>
                         <p class="fw-bold fs-2" style="color: #08974B;">PT. BPR ANTAR GUNA
                             <br />LAYANAN CEPAT, AMAN DAN TERPERCAYA
@@ -63,7 +64,7 @@
                                 <div class="fv-row mb-10">
                                     <div class="d-flex flex-stack mb-2">
                                         <label class="form-label fw-bolder text-dark fs-6 mb-0">Password</label>
-                                        <a href="javascript:void(0)" onclick="forgotPassword()">Forgot Password ?</a>
+                                        {{-- <a href="javascript:void(0)" onclick="forgotPassword()">Forgot Password ?</a> --}}
                                     </div>
                                     <input class="form-control form-control-lg form-control-solid Password" type="password"
                                         name="password" autocomplete="off" placeholder="Masukan Password" />

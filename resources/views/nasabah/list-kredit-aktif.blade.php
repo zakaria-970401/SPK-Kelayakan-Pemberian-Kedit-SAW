@@ -6,8 +6,7 @@
             <div class="card">
                 <div class="card-body">
                     <div class="table responsive">
-                        <table class="table table-striped table-bordered table-hover" id="dataTable" width="100%"
-                            cellspacing="0">
+                        <table id="table" width="100%" cellspacing="0">
                             <thead>
                                 <tr class="text-center">
                                     <th>No</th>
@@ -29,6 +28,9 @@
                                         <td>
                                             <a href="#" onclick="detail('{{ $list->id }}')"
                                                 class="btn btn-primary btn-sm"><i class="fas fa-eye"></i>Trace
+                                            </a>
+                                            <a href="{{ url('nasabah/printout/' . $list->id_nasabah) }}"
+                                                class="btn btn-dark btn-sm"><i class="fas fa-print"></i>Print
                                             </a>
                                         </td>
                                         <td>{{ $list->nama }}</td>
@@ -113,7 +115,7 @@
                     $('#detail-pembyaran').modal('show');
                     $('.appendBody').html("");
                     $('.appendBody').append(`
-                        <table class="table table-striped table-bordered table-hover" id="dataTable" width="100%"
+                        <table id="table" width="100%"
                             cellspacing="0">
                             <thead>
                                 <tr class="text-center">

@@ -70,11 +70,21 @@
             </div>
             <div class="menu-sub menu-sub-accordion menu-active-bg">
                 <div class="menu-item">
-                    <a class="menu-link" href="{{ url('nasabah/pembayaran-kredit') }}">
+                    <a class="menu-link" href="{{ url('nasabah/permintaan-hapus-data') }}">
                         <span class="menu-bullet">
                             <span class="bullet bullet-dot"></span>
                         </span>
-                        <span class="menu-title">Pembayaran Kredit</span>
+                        <span class="menu-title">Permintaan Hapus Data</span>
+                    </a>
+                </div>
+            </div>
+            <div class="menu-sub menu-sub-accordion menu-active-bg">
+                <div class="menu-item">
+                    <a class="menu-link" href="{{ url('nasabah/simulasi-kelayakan') }}">
+                        <span class="menu-bullet">
+                            <span class="bullet bullet-dot"></span>
+                        </span>
+                        <span class="menu-title">Simulasi Kelayakan Kredit</span>
                     </a>
                 </div>
             </div>
@@ -98,7 +108,7 @@
             </span>
             <div class="menu-sub menu-sub-accordion">
                 <div class="menu-item">
-                    <a class="menu-link" href="../../demo18/dist/apps/projects/list.html">
+                    <a class="menu-link" href="{{ url('superadmin/user') }}">
                         <span class="menu-bullet">
                             <span class="bullet bullet-dot"></span>
                         </span>
@@ -119,69 +129,51 @@
             </span>
             <div class="menu-sub menu-sub-accordion">
                 <div class="menu-item">
-                    <a class="menu-link" href="../../demo18/dist/apps/projects/list.html">
+                    <a class="menu-link" href="{{ url('superadmin/menu') }}">
                         <span class="menu-bullet">
                             <span class="bullet bullet-dot"></span>
                         </span>
-                        <span class="menu-title">Pemegang Akses Menu</span>
-                    </a>
-                </div>
-                <div class="menu-item">
-                    <a class="menu-link" href="../../demo18/dist/apps/projects/list.html">
-                        <span class="menu-bullet">
-                            <span class="bullet bullet-dot"></span>
-                        </span>
-                        <span class="menu-title">Nama Menu</span>
-                    </a>
-                </div>
-            </div>
-        </div>
-        <div data-kt-menu-trigger="click" class="menu-item menu-accordion">
-            <span class="menu-link">
-                <span class="menu-icon">
-                    <span class="svg-icon svg-icon-2">
-                        <i class="fas fa-edit"></i>
-                    </span>
-                </span>
-                <span class="menu-title">Master Transaksi</span>
-                <span class="menu-arrow"></span>
-            </span>
-            <div class="menu-sub menu-sub-accordion">
-                <div class="menu-item">
-                    <a class="menu-link" href="../../demo18/dist/apps/projects/list.html">
-                        <span class="menu-bullet">
-                            <span class="bullet bullet-dot"></span>
-                        </span>
-                        <span class="menu-title"> Transaksi Kredit</span>
+                        <span class="menu-title">Management Akses Menu</span>
                     </a>
                 </div>
             </div>
         </div>
         <div class="menu-item">
             <div class="menu-content pt-8 pb-0">
-                <span class="menu-section text-muted text-uppercase fs-8 ls-1">Layout</span>
+                <span class="menu-section text-muted text-uppercase fs-8 ls-1">PERMINTAAN HAPUS DATA</span>
             </div>
         </div>
         <div class="menu-item">
-            <a class="menu-link" href="https://preview.keenthemes.com/metronic8/demo18/layout-builder.html"
-                title="Build your layout and export HTML for server side integration" data-bs-toggle="tooltip"
-                data-bs-trigger="hover" data-bs-dismiss="click" data-bs-placement="right">
+            <a class="menu-link" href="#modal-permintaan-hapus" data-bs-toggle="modal">
                 <span class="menu-icon">
-                    <!--begin::Svg Icon | path: icons/duotune/general/gen019.svg-->
                     <span class="svg-icon svg-icon-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                            fill="none">
-                            <path
-                                d="M17.5 11H6.5C4 11 2 9 2 6.5C2 4 4 2 6.5 2H17.5C20 2 22 4 22 6.5C22 9 20 11 17.5 11ZM15 6.5C15 7.9 16.1 9 17.5 9C18.9 9 20 7.9 20 6.5C20 5.1 18.9 4 17.5 4C16.1 4 15 5.1 15 6.5Z"
-                                fill="black" />
-                            <path opacity="0.3"
-                                d="M17.5 22H6.5C4 22 2 20 2 17.5C2 15 4 13 6.5 13H17.5C20 13 22 15 22 17.5C22 20 20 22 17.5 22ZM4 17.5C4 18.9 5.1 20 6.5 20C7.9 20 9 18.9 9 17.5C9 16.1 7.9 15 6.5 15C5.1 15 4 16.1 4 17.5Z"
-                                fill="black" />
-                        </svg>
+                        <i class="fas fa-check-circle"></i>
                     </span>
-                    <!--end::Svg Icon-->
                 </span>
-                <span class="menu-title">Layout Builder</span>
+                @php
+                    $permintaan = DB::table('master_nasabah')
+                        ->where('status', 99)
+                        ->count();
+                @endphp
+                <span class="menu-title">Lihat Permintaan @if ($permintaan > 0)
+                        <span class="badge badge-danger ml-4">{{ $permintaan }}</span>
+                    @endif
+                </span>
+            </a>
+        </div>
+        <div class="menu-item">
+            <div class="menu-content pt-8 pb-0">
+                <span class="menu-section text-muted text-uppercase fs-8 ls-1">REPORT</span>
+            </div>
+        </div>
+        <div class="menu-item">
+            <a class="menu-link" href="{{ url('report') }}">
+                <span class="menu-icon">
+                    <span class="svg-icon svg-icon-2">
+                        <i class="fas fa-chart-bar"></i>
+                    </span>
+                </span>
+                <span class="menu-title">Report</span>
             </a>
         </div>
     </div>
