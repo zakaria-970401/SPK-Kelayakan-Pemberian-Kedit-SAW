@@ -97,6 +97,15 @@
                                 </thead>
                                 <tbody>
                                     @foreach ($nama_nasabah as $key => $item)
+                                        @php
+                                            $hasil_bagi[] = [
+                                                'C1' => $normalisasi['C1'][$key] / $max_crips,
+                                                'C2' => $normalisasi['C2'][$key] / $max_crips,
+                                                'C3' => $normalisasi['C3'][$key] / $max_crips,
+                                                'C4' => $normalisasi['C4'][$key] / $max_crips,
+                                                'C5' => $normalisasi['C5'][$key] / $max_crips,
+                                            ];
+                                        @endphp
                                         <tr class="text-center">
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $item }}</td>
@@ -189,7 +198,7 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div class="col-sm-9">
+                        <div class="col-sm-6">
                             <div class="table-responsive">
                                 <table id="table">
                                     <thead>
@@ -202,7 +211,6 @@
                                                 <th>{{ $item->kriteria }}</th>
                                             @endforeach
                                             <th class="bg-info text-white">HASIL</th>
-                                            <th class="bg-info text-white">RANGKING</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -211,28 +219,43 @@
                                                 <td>{{ $item }}</td>
                                                 @for ($i = 1; $i <= 5; $i++)
                                                     @php
-                                                        $hasil[] = $normalisasi['C' . $i][$key] * $kriteria->where('kode', 'C' . $i)->first()->bobot;
+                                                        // dd($hasil_bagi[$key]);
+                                                        $hasil[] = $hasil_bagi[$key]['C' . $i] * $kriteria->where('kode', 'C' . $i)->first()->bobot;
                                                     @endphp
                                                     <td>
-                                                        {{ $normalisasi['C' . $i][$key] }} *
+                                                        {{ $hasil_bagi[$key]['C' . $i] }} *
                                                         {{ $kriteria->where('kode', 'C' . $i)->first()->bobot }} =
                                                         <b>
-                                                            {{ $normalisasi['C' . $i][$key] * $kriteria->where('kode', 'C' . $i)->first()->bobot }}
+                                                            {{ $hasil_bagi[$key]['C' . $i] * $kriteria->where('kode', 'C' . $i)->first()->bobot }}
                                                         </b>
                                                     </td>
                                                 @endfor
-                                                @php
-                                                    $ranked = $rank->where('value', array_sum($hasil));
-                                                    $rank_value = $ranked->first()['rank'];
-                                                @endphp
-                                                <td class="bg-info text-white">{{ array_sum($hasil) }}</td>
-                                                <td class="bg-info text-white">
-                                                    {{ $rank_value }}
+                                                <td class="bg-info text-white">{{ $hasil[$key] }}</td>
                                             </tr>
                                         @endforeach
                                     </tbody>
                                 </table>
                             </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <table id="table">
+                                <thead>
+                                    <tr class="text-center">
+                                        <th colspan="6"><b>HASIL RANKING </b></th>
+                                    </tr>
+                                    <tr class="text-center">
+                                        <th>Nama</th>
+                                        <th class="bg-info text-white">RANGKING</th>
+                                    </tr>
+                                <tbody>
+                                    @foreach ($nama_nasabah as $item)
+                                        <tr>
+                                            <td>{{ $item }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                                </thead>
+                            </table>
                         </div>
                     </div>
                 </div>
