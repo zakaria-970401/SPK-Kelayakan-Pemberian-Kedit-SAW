@@ -165,6 +165,11 @@ table, th, td {
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-sm-12">
+                                <div class="float-end">
+                                    <h3>
+                                        <span class="badge badge-info"><i class="fas fa-info-circle text-white"></i> Bunga : {{ $bunga }} %</span>
+                                    </h3>
+                                </div>
                                 <div class="form-group mb-4">
                                   <input type="text" name="" id="" class="form-control nominalKreditValue" placeholder="NOMINAL KREDIT" aria-describedby="helpId">
                                 </div>

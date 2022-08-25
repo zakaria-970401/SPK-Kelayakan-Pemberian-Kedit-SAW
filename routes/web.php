@@ -21,6 +21,8 @@ Auth::routes();
 Route::get('/logout', [App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('post-logout');
 Route::POST('/change-password', [App\Http\Controllers\Auth\LoginController::class, 'ubahPassword'])->name('post-change-password');
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/masterbunga', [App\Http\Controllers\KreditNasabahController::class, 'masterbunga']);
+Route::get('/updatebunga/{value}', [App\Http\Controllers\KreditNasabahController::class, 'updatebunga']);
 Route::prefix('nasabah/')->group(
     function () {
         Route::get('pengajuan-kredit', [App\Http\Controllers\KreditNasabahController::class, 'index']);
@@ -60,4 +62,8 @@ Route::prefix('permission/')->group(function () {
     Route::post('/add_group_permission', [App\Http\Controllers\PermissionController::class, 'add_group_permission'])->name('permission.add_group_permission');
     Route::get('/hapus_permission/{kategori}/{id}', [App\Http\Controllers\PermissionController::class, 'hapus_permission']);
     Route::get('/update_permission/{kategori}/{nama}/{id}', [App\Http\Controllers\PermissionController::class, 'update_permission']);
+});
+
+Route::prefix('report/')->group(function () {
+    Route::get('/', [App\Http\Controllers\ReportController::class, 'index']);
 });

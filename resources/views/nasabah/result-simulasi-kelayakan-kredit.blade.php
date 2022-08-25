@@ -198,7 +198,7 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div class="col-sm-6">
+                        <div class="col-sm-9">
                             <div class="table-responsive">
                                 <table id="table">
                                     <thead>
@@ -211,51 +211,36 @@
                                                 <th>{{ $item->kriteria }}</th>
                                             @endforeach
                                             <th class="bg-info text-white">HASIL</th>
+                                            <th class="bg-info text-white">RANGKING</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @foreach ($nama_nasabah as $key => $item)
                                             <tr class="text-center">
                                                 <td>{{ $item }}</td>
+                                                @php
+                                                    $hasil = 0;
+                                                @endphp
                                                 @for ($i = 1; $i <= 5; $i++)
-                                                    @php
-                                                        // dd($hasil_bagi[$key]);
-                                                        $hasil[] = $hasil_bagi[$key]['C' . $i] * $kriteria->where('kode', 'C' . $i)->first()->bobot;
-                                                    @endphp
+                                                @php
+                                                    $hasil += $hasil_bagi[$key]['C' . $i] * $kriteria->where('kode', 'C' . $i)->first()->bobot;
+                                                @endphp
                                                     <td>
                                                         {{ $hasil_bagi[$key]['C' . $i] }} *
                                                         {{ $kriteria->where('kode', 'C' . $i)->first()->bobot }} =
                                                         <b>
-                                                            {{ $hasil_bagi[$key]['C' . $i] * $kriteria->where('kode', 'C' . $i)->first()->bobot }}
+                                                            {{ $hasil_bagi[$key]['C' . $i] * 
+                                                            $kriteria->where('kode', 'C' . $i)->first()->bobot }}
                                                         </b>
                                                     </td>
                                                 @endfor
-                                                <td class="bg-info text-white">{{ $hasil[$key] }}</td>
+                                                <td class="bg-info text-white">{{ $hasil }}</td>
+                                                <td class="bg-info text-white">{{ $rank->where('value', $hasil)->first()['rank'] }}</td>
                                             </tr>
                                         @endforeach
                                     </tbody>
                                 </table>
                             </div>
-                        </div>
-                        <div class="col-sm-3">
-                            <table id="table">
-                                <thead>
-                                    <tr class="text-center">
-                                        <th colspan="6"><b>HASIL RANKING </b></th>
-                                    </tr>
-                                    <tr class="text-center">
-                                        <th>Nama</th>
-                                        <th class="bg-info text-white">RANGKING</th>
-                                    </tr>
-                                <tbody>
-                                    @foreach ($nama_nasabah as $item)
-                                        <tr>
-                                            <td>{{ $item }}</td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                                </thead>
-                            </table>
                         </div>
                     </div>
                 </div>

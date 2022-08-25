@@ -97,11 +97,9 @@
         <div data-kt-menu-trigger="click" class="menu-item menu-accordion">
             <span class="menu-link">
                 <span class="menu-icon">
-                    <!--begin::Svg Icon | path: icons/duotune/general/gen002.svg-->
                     <span class="svg-icon svg-icon-2">
                         <i class="fas fa-cogs"></i>
                     </span>
-                    <!--end::Svg Icon-->
                 </span>
                 <span class="menu-title">Master User</span>
                 <span class="menu-arrow"></span>
@@ -136,6 +134,17 @@
                         <span class="menu-title">Management Akses Menu</span>
                     </a>
                 </div>
+            </div>
+            <div class="menu-item">
+                <a class="menu-link" href="javascript:void(0)" onclick="masterBunga()">
+                    <span class="menu-icon">
+                        <span class="svg-icon svg-icon-2">
+                            <i>%</i>
+                        </span>
+                    </span>
+                    <span class="menu-title">Setting Bunga
+                    </span>
+                </a>
             </div>
         </div>
         <div class="menu-item">
@@ -178,3 +187,38 @@
         </div>
     </div>
 </div>
+
+<script>
+    function masterBunga() {
+        $.ajax({
+            url: "{{ url('masterbunga') }}",
+            type: 'GET',
+            dataType: 'json',
+            success: function(response) {
+                Swal.fire({
+                    title: "Bunga Saat ini " + response.data.bunga + "%",
+                    input: 'number',
+                    showCancelButton: true
+                }).then((result) => {
+                    if (result.value) {
+                        $.ajax({
+                            url: "{{ url('updatebunga') }}/" + result.value,
+                            type: 'GET',
+                            dataType: 'json',
+                            success: function(response) {
+                                Swal.fire({
+                                    title: "Success",
+                                    text: "Bunga Berhasil Di ubah menjadi " +
+                                        result.value + "%",
+                                    icon: 'success',
+                                }).then((result) => {
+                                    location.reload()
+                                });
+                            }
+                        })
+                    }
+                });
+            }
+        })
+    }
+</script>

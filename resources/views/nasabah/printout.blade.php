@@ -17,6 +17,35 @@
                 display: none !important;
             }
         }
+
+        #table {
+            font-family: Arial, Helvetica, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        #table td,
+        #table th {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        #table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        #table tr:hover {
+            background-color: #ddd;
+        }
+
+        #table th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            text-align: center;
+            background-color: #079b65;
+            color: white;
+        }
     </style>
 
     <title>Print Out</title>
@@ -75,12 +104,13 @@
                                     mengajukan permohonan kredit dalam besaran nominal <b>Rp.
                                         {{ number_format($transaksi[0]->nominal_kredit, 0, ',', '.') }}</b> dengan
                                     jangka
-                                    waktu <b>{{ $transaksi[0]->jangka_kredit }} Bulan</b>, dan data di atas bisa
+                                    waktu <b>{{ $transaksi[0]->jangka_kredit }} Bulan</b> dan bunga sebesar
+                                    <b> {{ $bunga }}%</b> , dan data di atas bisa
                                     di
                                     pertanggung
                                     jawabkan sebagaimana mestinya. Adapun rincian pembayaran tersebut:
                                 </p>
-                                <table id="table table-bordered">
+                                <table id="table">
                                     <thead>
                                         <tr class="text-center">
                                             <th>NO</th>
@@ -96,7 +126,7 @@
                                                 <td scope="row">{{ $item->pembayaran_ke }}</td>
                                                 <td scope="row">
                                                     Rp.
-                                                    {{ number_format($item->nominal_kredit / count($transaksi), 0, ',', '.') }}
+                                                    {{ number_format($total_bunga, 0, ',', '.') }}
                                                 </td>
                                                 <td scope="row">
                                                     {{ \Carbon\Carbon::parse($item->jatuh_tempo)->format('d M Y') }}
@@ -108,7 +138,7 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-sm-6">
+                            <div class="col-sm-4">
                                 <br>
                                 <br>
                                 <table id="table table-bordered">
@@ -120,11 +150,13 @@
                                             <th><br><br></th>
                                         </tr>
                                         <tr class="text-center">
-                                            <th>{{ Auth::user()->name }}</th>
+                                            <th><br>{{ Auth::user()->name }}</th>
                                         </tr>
                                 </table>
                             </div>
-                            <div class="col-sm-6">
+                            <div class="col-sm-5"></div>
+                            <div class="col-sm-3">
+                                <br>
                                 <table id="table table-bordered">
                                     <thead>
                                         <tr class="text-center">
@@ -134,7 +166,9 @@
                                             <th>PEMOHON</th>
                                         </tr>
                                         <tr>
-                                            <th><br><br></th>
+                                            <th><br>
+                                                <br><br>
+                                            </th>
                                         </tr>
                                         <tr class="text-center">
                                             <th>{{ $nasabah->nama }}</th>

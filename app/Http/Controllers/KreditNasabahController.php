@@ -16,7 +16,8 @@ class KreditNasabahController extends Controller
     {
         $kriteria = DB::table('master_kriteria')->get();
         $sub = DB::table('master_subkriteria')->orderBy('nilai', 'ASC')->get();
-        return view('nasabah.pengajuan-kredit', compact('kriteria', 'sub'));
+        $bunga =  DB::table('master_bunga')->first()->bunga;
+        return view('nasabah.pengajuan-kredit', compact('kriteria', 'sub', 'bunga'));
     }
 
     public function checkKelayakan(Request $request)
@@ -123,15 +124,16 @@ class KreditNasabahController extends Controller
         foreach ($jatuh_tempo as $key => $value) {
             DB::table('transaksi_nasabah')->insert([
                 'id_nasabah' => $id_nasabah == null ? 1 : $id_nasabah,
-                'jangka_kredit' => (int)$request->pariode,
+                'jangka_kredit'  => (int)$request->pariode,
+                'pariode_bulan'  => date('m', strtotime($value)),
+                'pariode_tahun'  => date('Y'),
                 'nominal_kredit' => $nominal,
-                'jatuh_tempo' => $value,
-                'pembayaran_ke' => $key + 1,
-                'created_at' => date('Y-m-d H:i:s'),
-                'created_by' => Auth::user()->name,
+                'jatuh_tempo'    => $value,
+                'pembayaran_ke'  => $key + 1,
+                'created_at'     => date('Y-m-d H:i:s'),
+                'created_by'     => Auth::user()->name,
             ]);
         }
-
 
         Session::flash('success', 'Data berhasil Disimpan, Silahkan Print Out Surat Keterangan Kredit');
         return redirect('nasabah/printout/' . $id_nasabah);
@@ -157,8 +159,12 @@ class KreditNasabahController extends Controller
     {
         $transaksi = DB::table('transaksi_nasabah')->where('id_nasabah', $id_nasabah)->get();
         $nasabah = DB::table('master_nasabah')->where('id', $id_nasabah)->first();
+        $bunga = DB::table('master_bunga')->first()->bunga;
+        $rincian = $transaksi->first();
+        $total_bunga = (int)$rincian->nominal_kredit / (int) $rincian->jangka_kredit;
+        $total_bunga = (int) $bunga / 100 * $rincian->nominal_kredit + $total_bunga;
 
-        return view('nasabah.printout', compact('transaksi', 'nasabah'));
+        return view('nasabah.printout', compact('transaksi', 'nasabah', 'bunga', 'total_bunga'));
     }
 
     public function listJatuhTempo()
@@ -297,10 +303,11 @@ class KreditNasabahController extends Controller
 
         foreach ($request->nama_nasabah as $key => $value) {
             $nama_nasabah = $nama_nasabah->merge($value);
+            $hasil = 0;
             for ($i = 1; $i <= 5; $i++) {
-                $hasil[] = $normalisasi['C' . $i][$key] * $kriteria->where('kode', 'C' . $i)->first()->bobot;
+                $hasil += $normalisasi['C' . $i][$key] / $max_crips * $kriteria->where('kode', 'C' . $i)->first()->bobot;
             }
-            $hasil_hitungan[] = array_sum($hasil);
+            $hasil_hitungan[] = $hasil;
         }
 
         $rankings = array_unique($hasil_hitungan);
@@ -308,12 +315,11 @@ class KreditNasabahController extends Controller
         $rank = array();
         foreach ($rankings as $value) {
             $rankedValue = array();
-            $rankedValue['value'] = $value;
+            $rankedValue['value'] = (int)$value;
             $rankedValue['rank'] = array_search($value, $rankings) + 1;
             $rank[] = $rankedValue;
         }
         $rank = collect($rank);
-        // dd($rank);
         return view('nasabah.result-simulasi-kelayakan-kredit', compact('kriteria', 'sub_text', 'nama_nasabah', 'normalisasi', 'max_crips', 'rank'));
     }
 
@@ -352,5 +358,24 @@ class KreditNasabahController extends Controller
         DB::table('master_nasabah')->where('id', $id)->delete();
         Session::flash('success', 'Permintaan Hapus Data Berhasil Disetujui');
         return back();
+    }
+
+    public function masterbunga()
+    {
+        $data = DB::table('master_bunga')->first();
+        return response()->json([
+            'data' => $data,
+        ]);
+    }
+
+    public function updatebunga($value)
+    {
+        $data = DB::table('master_bunga')->update([
+            'bunga' => $value,
+        ]);
+
+        return response()->json([
+            'data' => $data,
+        ]);
     }
 }
