@@ -1,3 +1,10 @@
+@php
+$permission = DB::table('auth_group_permission')
+    ->join('auth_permission', 'auth_permission.id', '=', 'auth_group_permission.permission_id')
+    ->where('auth_group_permission.group_id', Auth::user()->auth_group)
+    ->pluck('auth_permission.name')
+    ->toArray();
+@endphp
 <div class="hover-scroll-overlay-y my-5 me-n4 pe-4" id="kt_aside_menu_wrapper" data-kt-scroll="true"
     data-kt-scroll-activate="true" data-kt-scroll-height="auto" data-kt-scroll-dependencies="#kt_aside_footer"
     data-kt-scroll-wrappers="#kt_aside, #kt_aside_menu" data-kt-scroll-offset="2px">
@@ -23,168 +30,177 @@
                 <span class="menu-title">Dashboards</span>
             </span>
         </div>
-        <div class="menu-item">
-            <div class="menu-content pt-8 pb-2">
-                <span class="menu-section text-muted text-uppercase fs-8 ls-1">Menu Nasabah</span>
+
+        @if (in_array('menu_nasabah', $permission))
+            <div class="menu-item">
+                <div class="menu-content pt-8 pb-2">
+                    <span class="menu-section text-muted text-uppercase fs-8 ls-1">Menu Nasabah</span>
+                </div>
             </div>
-        </div>
-        <div data-kt-menu-trigger="click" class="menu-item menu-accordion">
-            <span class="menu-link">
-                <span class="menu-icon">
-                    <span class="svg-icon svg-icon-2">
-                        <i class="fas fa-users"></i>
+            <div data-kt-menu-trigger="click" class="menu-item menu-accordion">
+                <span class="menu-link">
+                    <span class="menu-icon">
+                        <span class="svg-icon svg-icon-2">
+                            <i class="fas fa-users"></i>
+                        </span>
                     </span>
+                    <span class="menu-title">Nasabah</span>
+                    <span class="menu-arrow"></span>
                 </span>
-                <span class="menu-title">Nasabah</span>
-                <span class="menu-arrow"></span>
-            </span>
-            <div class="menu-sub menu-sub-accordion menu-active-bg">
-                <div class="menu-item">
-                    <a class="menu-link" href="{{ url('nasabah/pengajuan-kredit') }}">
-                        <span class="menu-bullet">
-                            <span class="bullet bullet-dot"></span>
-                        </span>
-                        <span class="menu-title">Pengajuan Kredit</span>
-                    </a>
+                <div class="menu-sub menu-sub-accordion menu-active-bg">
+                    <div class="menu-item">
+                        <a class="menu-link" href="{{ url('nasabah/pengajuan-kredit') }}">
+                            <span class="menu-bullet">
+                                <span class="bullet bullet-dot"></span>
+                            </span>
+                            <span class="menu-title">Pengajuan Kredit</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="menu-sub menu-sub-accordion menu-active-bg">
+                    <div class="menu-item">
+                        <a class="menu-link" href="{{ url('nasabah/list-kredit-aktif') }}">
+                            <span class="menu-bullet">
+                                <span class="bullet bullet-dot"></span>
+                            </span>
+                            <span class="menu-title">List Kredit Aktif</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="menu-sub menu-sub-accordion menu-active-bg">
+                    <div class="menu-item">
+                        <a class="menu-link" href="{{ url('nasabah/list-jatuh-tempo') }}">
+                            <span class="menu-bullet">
+                                <span class="bullet bullet-dot"></span>
+                            </span>
+                            <span class="menu-title">List Jatuh Tempo</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="menu-sub menu-sub-accordion menu-active-bg">
+                    <div class="menu-item">
+                        <a class="menu-link" href="{{ url('nasabah/permintaan-hapus-data') }}">
+                            <span class="menu-bullet">
+                                <span class="bullet bullet-dot"></span>
+                            </span>
+                            <span class="menu-title">Permintaan Hapus Data</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="menu-sub menu-sub-accordion menu-active-bg">
+                    <div class="menu-item">
+                        <a class="menu-link" href="{{ url('nasabah/simulasi-kelayakan') }}">
+                            <span class="menu-bullet">
+                                <span class="bullet bullet-dot"></span>
+                            </span>
+                            <span class="menu-title">Simulasi Kelayakan Kredit</span>
+                        </a>
+                    </div>
                 </div>
             </div>
-            <div class="menu-sub menu-sub-accordion menu-active-bg">
-                <div class="menu-item">
-                    <a class="menu-link" href="{{ url('nasabah/list-kredit-aktif') }}">
-                        <span class="menu-bullet">
-                            <span class="bullet bullet-dot"></span>
-                        </span>
-                        <span class="menu-title">List Kredit Aktif</span>
-                    </a>
+        @endif
+        @if (in_array('management_user', $permission))
+            <div class="menu-item">
+                <div class="menu-content pt-8 pb-2">
+                    <span class="menu-section text-muted text-uppercase fs-8 ls-1">Management Users</span>
                 </div>
             </div>
-            <div class="menu-sub menu-sub-accordion menu-active-bg">
-                <div class="menu-item">
-                    <a class="menu-link" href="{{ url('nasabah/list-jatuh-tempo') }}">
-                        <span class="menu-bullet">
-                            <span class="bullet bullet-dot"></span>
+            <div data-kt-menu-trigger="click" class="menu-item menu-accordion">
+                <span class="menu-link">
+                    <span class="menu-icon">
+                        <span class="svg-icon svg-icon-2">
+                            <i class="fas fa-cogs"></i>
                         </span>
-                        <span class="menu-title">List Jatuh Tempo</span>
-                    </a>
-                </div>
-            </div>
-            <div class="menu-sub menu-sub-accordion menu-active-bg">
-                <div class="menu-item">
-                    <a class="menu-link" href="{{ url('nasabah/permintaan-hapus-data') }}">
-                        <span class="menu-bullet">
-                            <span class="bullet bullet-dot"></span>
-                        </span>
-                        <span class="menu-title">Permintaan Hapus Data</span>
-                    </a>
-                </div>
-            </div>
-            <div class="menu-sub menu-sub-accordion menu-active-bg">
-                <div class="menu-item">
-                    <a class="menu-link" href="{{ url('nasabah/simulasi-kelayakan') }}">
-                        <span class="menu-bullet">
-                            <span class="bullet bullet-dot"></span>
-                        </span>
-                        <span class="menu-title">Simulasi Kelayakan Kredit</span>
-                    </a>
-                </div>
-            </div>
-        </div>
-        <div class="menu-item">
-            <div class="menu-content pt-8 pb-2">
-                <span class="menu-section text-muted text-uppercase fs-8 ls-1">Management Users</span>
-            </div>
-        </div>
-        <div data-kt-menu-trigger="click" class="menu-item menu-accordion">
-            <span class="menu-link">
-                <span class="menu-icon">
-                    <span class="svg-icon svg-icon-2">
-                        <i class="fas fa-cogs"></i>
                     </span>
+                    <span class="menu-title">Master User</span>
+                    <span class="menu-arrow"></span>
                 </span>
-                <span class="menu-title">Master User</span>
-                <span class="menu-arrow"></span>
-            </span>
-            <div class="menu-sub menu-sub-accordion">
-                <div class="menu-item">
-                    <a class="menu-link" href="{{ url('superadmin/user') }}">
-                        <span class="menu-bullet">
-                            <span class="bullet bullet-dot"></span>
+                <div class="menu-sub menu-sub-accordion">
+                    <div class="menu-item">
+                        <a class="menu-link" href="{{ url('superadmin/user') }}">
+                            <span class="menu-bullet">
+                                <span class="bullet bullet-dot"></span>
+                            </span>
+                            <span class="menu-title">List Users</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div data-kt-menu-trigger="click" class="menu-item menu-accordion">
+                <span class="menu-link">
+                    <span class="menu-icon">
+                        <span class="svg-icon svg-icon-2">
+                            <i class="fas fa-desktop"></i>
                         </span>
-                        <span class="menu-title">List Users</span>
+                    </span>
+                    <span class="menu-title">Master Menu</span>
+                    <span class="menu-arrow"></span>
+                </span>
+                <div class="menu-sub menu-sub-accordion">
+                    <div class="menu-item">
+                        <a class="menu-link" href="{{ url('superadmin/menu') }}">
+                            <span class="menu-bullet">
+                                <span class="bullet bullet-dot"></span>
+                            </span>
+                            <span class="menu-title">Management Akses Menu</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="menu-item">
+                    <a class="menu-link" href="javascript:void(0)" onclick="masterBunga()">
+                        <span class="menu-icon">
+                            <span class="svg-icon svg-icon-2">
+                                <i>%</i>
+                            </span>
+                        </span>
+                        <span class="menu-title">Setting Bunga
+                        </span>
                     </a>
                 </div>
             </div>
-        </div>
-        <div data-kt-menu-trigger="click" class="menu-item menu-accordion">
-            <span class="menu-link">
-                <span class="menu-icon">
-                    <span class="svg-icon svg-icon-2">
-                        <i class="fas fa-desktop"></i>
-                    </span>
-                </span>
-                <span class="menu-title">Master Menu</span>
-                <span class="menu-arrow"></span>
-            </span>
-            <div class="menu-sub menu-sub-accordion">
-                <div class="menu-item">
-                    <a class="menu-link" href="{{ url('superadmin/menu') }}">
-                        <span class="menu-bullet">
-                            <span class="bullet bullet-dot"></span>
-                        </span>
-                        <span class="menu-title">Management Akses Menu</span>
-                    </a>
+        @endif
+        @if (in_array('permintaan_hapus_data', $permission))
+            <div class="menu-item">
+                <div class="menu-content pt-8 pb-0">
+                    <span class="menu-section text-muted text-uppercase fs-8 ls-1">PERMINTAAN HAPUS DATA</span>
                 </div>
             </div>
             <div class="menu-item">
-                <a class="menu-link" href="javascript:void(0)" onclick="masterBunga()">
+                <a class="menu-link" href="#modal-permintaan-hapus" data-bs-toggle="modal">
                     <span class="menu-icon">
                         <span class="svg-icon svg-icon-2">
-                            <i>%</i>
+                            <i class="fas fa-check-circle"></i>
                         </span>
                     </span>
-                    <span class="menu-title">Setting Bunga
+                    @php
+                        $permintaan = DB::table('master_nasabah')
+                            ->where('status', 99)
+                            ->count();
+                    @endphp
+                    <span class="menu-title">Lihat Permintaan @if ($permintaan > 0)
+                            <span class="badge badge-danger ml-4">{{ $permintaan }}</span>
+                        @endif
                     </span>
                 </a>
             </div>
-        </div>
-        <div class="menu-item">
-            <div class="menu-content pt-8 pb-0">
-                <span class="menu-section text-muted text-uppercase fs-8 ls-1">PERMINTAAN HAPUS DATA</span>
+        @endif
+        @if (in_array('report', $permission))
+            <div class="menu-item">
+                <div class="menu-content pt-8 pb-0">
+                    <span class="menu-section text-muted text-uppercase fs-8 ls-1">REPORT</span>
+                </div>
             </div>
-        </div>
-        <div class="menu-item">
-            <a class="menu-link" href="#modal-permintaan-hapus" data-bs-toggle="modal">
-                <span class="menu-icon">
-                    <span class="svg-icon svg-icon-2">
-                        <i class="fas fa-check-circle"></i>
+            <div class="menu-item">
+                <a class="menu-link" href="{{ url('report') }}">
+                    <span class="menu-icon">
+                        <span class="svg-icon svg-icon-2">
+                            <i class="fas fa-chart-bar"></i>
+                        </span>
                     </span>
-                </span>
-                @php
-                    $permintaan = DB::table('master_nasabah')
-                        ->where('status', 99)
-                        ->count();
-                @endphp
-                <span class="menu-title">Lihat Permintaan @if ($permintaan > 0)
-                        <span class="badge badge-danger ml-4">{{ $permintaan }}</span>
-                    @endif
-                </span>
-            </a>
-        </div>
-        <div class="menu-item">
-            <div class="menu-content pt-8 pb-0">
-                <span class="menu-section text-muted text-uppercase fs-8 ls-1">REPORT</span>
+                    <span class="menu-title">Report</span>
+                </a>
             </div>
-        </div>
-        <div class="menu-item">
-            <a class="menu-link" href="{{ url('report') }}">
-                <span class="menu-icon">
-                    <span class="svg-icon svg-icon-2">
-                        <i class="fas fa-chart-bar"></i>
-                    </span>
-                </span>
-                <span class="menu-title">Report</span>
-            </a>
-        </div>
+        @endif
     </div>
 </div>
 

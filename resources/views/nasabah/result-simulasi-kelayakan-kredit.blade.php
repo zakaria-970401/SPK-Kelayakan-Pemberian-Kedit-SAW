@@ -203,7 +203,7 @@
                                 <table id="table">
                                     <thead>
                                         <tr class="text-center">
-                                            <th colspan="8"><b>HASIL PERHITUNGAN </b></th>
+                                            <th colspan="9"><b>HASIL PERHITUNGAN </b></th>
                                         </tr>
                                         <tr class="text-center">
                                             <th>Nama</th>
@@ -211,6 +211,7 @@
                                                 <th>{{ $item->kriteria }}</th>
                                             @endforeach
                                             <th class="bg-info text-white">HASIL</th>
+                                            <th class="bg-info text-white">KETERANGAN</th>
                                             <th class="bg-info text-white">RANGKING</th>
                                         </tr>
                                     </thead>
@@ -222,20 +223,33 @@
                                                     $hasil = 0;
                                                 @endphp
                                                 @for ($i = 1; $i <= 5; $i++)
-                                                @php
-                                                    $hasil += $hasil_bagi[$key]['C' . $i] * $kriteria->where('kode', 'C' . $i)->first()->bobot;
-                                                @endphp
+                                                    @php
+                                                        $hasil += $hasil_bagi[$key]['C' . $i] * $kriteria->where('kode', 'C' . $i)->first()->bobot;
+                                                        $texthasil = '';
+                                                        if ($hasil <= 20) {
+                                                            $texthasil = 'Sangat Tidak Layak';
+                                                        } elseif ($hasil <= 40) {
+                                                            $texthasil = 'Tidak Layak';
+                                                        } elseif ($hasil <= 60) {
+                                                            $texthasil = 'Cukup';
+                                                        } elseif ($hasil <= 80) {
+                                                            $texthasil = 'Layak';
+                                                        } elseif ($hasil <= 100) {
+                                                            $texthasil = 'Sangat Layak';
+                                                        }
+                                                    @endphp
                                                     <td>
                                                         {{ $hasil_bagi[$key]['C' . $i] }} *
                                                         {{ $kriteria->where('kode', 'C' . $i)->first()->bobot }} =
                                                         <b>
-                                                            {{ $hasil_bagi[$key]['C' . $i] * 
-                                                            $kriteria->where('kode', 'C' . $i)->first()->bobot }}
+                                                            {{ $hasil_bagi[$key]['C' . $i] * $kriteria->where('kode', 'C' . $i)->first()->bobot }}
                                                         </b>
                                                     </td>
                                                 @endfor
                                                 <td class="bg-info text-white">{{ $hasil }}</td>
-                                                <td class="bg-info text-white">{{ $rank->where('value', $hasil)->first()['rank'] }}</td>
+                                                <td class="bg-info text-white">{{ $texthasil }}</td>
+                                                <td class="bg-info text-white">
+                                                    {{ $rank->where('value', $hasil)->first()['rank'] }}</td>
                                             </tr>
                                         @endforeach
                                     </tbody>
