@@ -46,6 +46,9 @@
             background-color: #079b65;
             color: white;
         }
+        @media print {
+            .pagebreak { page-break-before: always; } /* page-break-after works, as well */
+        }
     </style>
 
     <title>Print Out</title>
@@ -53,7 +56,8 @@
 
 <body>
     <div class="container mt-4">
-        <div class="row">
+        <div class="page-break">
+          <div class="row">
             <div class="col-sm-12">
                 <div class="card">
                     <div class="card-body">
@@ -81,7 +85,7 @@
                         <div class="row">
                             <div class="col-sm-3"></div>
                             <div class="col-sm-6 text-center"><u><b>
-                                        <h5>SURAT KETERANGAN PERMOHONAN KREDIT</h5>
+                                        <h5>SURAT KETERANGAN KELAYAKAN KREDIT</h5>
                                     </b></u></div>
                             <div class="col-sm-2"></div>
                         </div>
@@ -104,37 +108,113 @@
                                     mengajukan permohonan kredit dalam besaran nominal <b>Rp.
                                         {{ number_format($transaksi[0]->nominal_kredit, 0, ',', '.') }}</b> dengan
                                     jangka
-                                    waktu <b>{{ $transaksi[0]->jangka_kredit }} Bulan</b> dan bunga sebesar
-                                    <b> {{ $bunga }}%</b> , dan data di atas bisa
+                                    waktu <b>{{ $transaksi[0]->jangka_kredit }} Bulan</b>, dan data di atas bisa
                                     di
                                     pertanggung
-                                    jawabkan sebagaimana mestinya. Adapun rincian pembayaran tersebut:
+                                    jawabkan sebagaimana mestinya. Adapun Hasil Perhitungan kelayakan kredit seperti
+                                    berikut:
                                 </p>
-                                <table id="table">
-                                    <thead>
-                                        <tr class="text-center">
-                                            <th>NO</th>
-                                            <th>PEMBAYARAN KE</th>
-                                            <th>NOMINAL</th>
-                                            <th>JATUH TEMPO</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($transaksi as $item)
-                                            <tr class="text-center">
-                                                <td scope="row">{{ $loop->iteration }}</td>
-                                                <td scope="row">{{ $item->pembayaran_ke }}</td>
-                                                <td scope="row">
-                                                    Rp.
-                                                    {{ number_format($total_bunga, 0, ',', '.') }}
-                                                </td>
-                                                <td scope="row">
-                                                    {{ \Carbon\Carbon::parse($item->jatuh_tempo)->format('d M Y') }}
-                                                </td>
+                                <div class="table-responsive">
+                                    <table id="table">
+                                        <thead>
+                                            <tr class="border-0 text-dark text-center">
+                                                @for ($i = 1; $i <= 5; $i++)
+                                                    <th>C{{ $i }}</th>
+                                                @endfor
                                             </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
+                                        </thead>
+                                        <tbody class="">
+                                            <tr class="text-center">
+                                                @foreach ($kriteria as $item)
+                                                    <td>{{ $item->kriteria }}</td>
+                                                @endforeach
+                                            </tr>
+                                        </tbody>
+                                        <tfooter class="">
+                                            <tr class="text-center">
+                                                @foreach ($kriteria as $item)
+                                                    <td>BOBOT : {{ $item->bobot }}%</td>
+                                                @endforeach
+                                            </tr>
+                                        </tfooter>
+                                    </table>
+                                    <hr>
+                                    <table id="table">
+                                        <thead>
+                                            <tr class="border-0 text-center">
+                                                <th>NAMA NASABAH</th>
+                                                @for ($i = 1; $i <= 5; $i++)
+                                                    <th>C{{ $i }}</th>
+                                                @endfor
+                                            </tr>
+                                        </thead>
+                                        <tbody class="text-center">
+                                            <tr class="beforeNormalisasi">
+                                                <td>{{$nasabah->nama}}</td>
+                                                @for ($i = 1; $i <= 5; $i++)
+                                                    {{-- @php
+                                                        dd($before['C' . $i.'_text']);
+                                                    @endphp --}}
+                                                    <td>{{ $before['C' . $i.'_text'] }}</td>
+                                                @endfor
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <hr>
+                                    <h4 class="text-dark text-center mt-4"><b>TABLE NORMALISASI</b></h4>
+                                    <table id="table">
+                                        <thead>
+                                            <tr class="border-0 text-center">
+                                                <th>NAMA NASABAH</th>
+                                                @for ($i = 1; $i <= 5; $i++)
+                                                    <th>C{{ $i }}</th>
+                                                @endfor
+                                                <th>MAX CRIPS</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="text-center">
+                                            <tr class="afterNormalisasi">
+                                                <td>{{$nasabah->nama}}</td>
+                                                   @foreach($normalisasi as $list)
+                                                    <td>{{ $list }}</td>
+                                                @endforeach
+                                                <td rowspan="2">{{$max_crips}}</td>
+                                            </tr>
+                                        </tbody>
+                                        <tfooter class="text-center">
+                                            <tr class="text-center">
+                                                <td>-</td>
+                                                @for($i = 1; $i <= 5; $i++)
+                                                    <td>{{ $normalisasi['C' . $i] }} / {{ $max_crips }} = {{number_format($hasil_bagi_crips['C'.$i],  2, '.', '')}}</td>
+                                                @endfor
+                                                <td>-</td>
+                                            </tr>
+                                        </tfooter>
+                                    </table>
+                                    <hr>
+                                    <br>
+                                    <h4 class="text-dark text-center mt-4"><b>TABLE PERANGKINGAN(R x W) </b></h4>
+                                    <table id="table">
+                                        <thead>
+                                            <tr class="border-0" style="zoom: 150%;">
+                                                <th class="">PERHITUNGAN</th>
+                                                <th class="">HASIL SCORE</th>
+                                                <th class="">KEPUTUSAN</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="">
+                                            <tr class="">
+                                                <td class="">
+                                                    @for ($i = 1; $i <= 5; $i++)
+                                                    {{ number_format($hasil_bagi_crips['C'.$i],  2, '.', '')}} * {{ $bobot_value['C'.$i] }}, 
+                                                    @endfor
+                                                </td>
+                                                <td class="">{{$keputusan}}</td>
+                                                <td class="">{{$texthasil}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                         <div class="row">
@@ -181,6 +261,7 @@
             </div>
         </div>
     </div>
+</div>
 </body>
 
 </html>

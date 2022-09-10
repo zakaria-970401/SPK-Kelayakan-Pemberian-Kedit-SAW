@@ -53,11 +53,11 @@ $permission = DB::table('auth_group_permission')
                             <span class="menu-bullet">
                                 <span class="bullet bullet-dot"></span>
                             </span>
-                            <span class="menu-title">Pengajuan Kredit</span>
+                            <span class="menu-title">Perhitungan Kelayakan Kredit</span>
                         </a>
                     </div>
                 </div>
-                <div class="menu-sub menu-sub-accordion menu-active-bg">
+                {{-- <div class="menu-sub menu-sub-accordion menu-active-bg">
                     <div class="menu-item">
                         <a class="menu-link" href="{{ url('nasabah/list-kredit-aktif') }}">
                             <span class="menu-bullet">
@@ -76,7 +76,7 @@ $permission = DB::table('auth_group_permission')
                             <span class="menu-title">List Jatuh Tempo</span>
                         </a>
                     </div>
-                </div>
+                </div> --}}
                 <div class="menu-sub menu-sub-accordion menu-active-bg">
                     <div class="menu-item">
                         <a class="menu-link" href="{{ url('nasabah/permintaan-hapus-data') }}">
@@ -146,7 +146,7 @@ $permission = DB::table('auth_group_permission')
                         </a>
                     </div>
                 </div>
-                <div class="menu-item">
+                {{-- <div class="menu-item">
                     <a class="menu-link" href="javascript:void(0)" onclick="masterBunga()">
                         <span class="menu-icon">
                             <span class="svg-icon svg-icon-2">
@@ -156,7 +156,7 @@ $permission = DB::table('auth_group_permission')
                         <span class="menu-title">Setting Bunga
                         </span>
                     </a>
-                </div>
+                </div> --}}
             </div>
         @endif
         @if (in_array('permintaan_hapus_data', $permission))

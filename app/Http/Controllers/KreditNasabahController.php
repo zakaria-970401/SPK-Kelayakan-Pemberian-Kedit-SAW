@@ -16,8 +16,8 @@ class KreditNasabahController extends Controller
     {
         $kriteria = DB::table('master_kriteria')->get();
         $sub = DB::table('master_subkriteria')->orderBy('nilai', 'ASC')->get();
-        $bunga =  DB::table('master_bunga')->first()->bunga;
-        return view('nasabah.pengajuan-kredit', compact('kriteria', 'sub', 'bunga'));
+        // $bunga =  DB::table('master_bunga')->first()->bunga;
+        return view('nasabah.pengajuan-kredit', compact('kriteria', 'sub'));
     }
 
     public function checkKelayakan(Request $request)
@@ -159,37 +159,104 @@ class KreditNasabahController extends Controller
     {
         $transaksi = DB::table('transaksi_nasabah')->where('id_nasabah', $id_nasabah)->get();
         $nasabah = DB::table('master_nasabah')->where('id', $id_nasabah)->first();
-        $bunga = DB::table('master_bunga')->first()->bunga;
+        // $bunga = DB::table('master_bunga')->first()->bunga;
         $rincian = $transaksi->first();
-        $total_bunga = (int)$rincian->nominal_kredit / (int) $rincian->jangka_kredit;
-        $total_bunga = (int) $bunga / 100 * $rincian->nominal_kredit + $total_bunga;
+        $total = (int)$rincian->nominal_kredit / (int) $rincian->jangka_kredit;
 
-        return view('nasabah.printout', compact('transaksi', 'nasabah', 'bunga', 'total_bunga'));
-    }
+        $crips = [
+            $nasabah->c1,
+            $nasabah->c2,
+            $nasabah->c3,
+            $nasabah->c4,
+        ];
+        $kriteria = DB::table('master_kriteria')->get();
 
-    public function listJatuhTempo()
-    {
-        $list  = DB::table('transaksi_nasabah')->get();
-        $data = [];
-        foreach ($list as $list) {
-            $jatuh_tempo   = Carbon::parse($list->jatuh_tempo);
-            $jangka_kredit = $list->jangka_kredit;
-            $jatuh_tempo = $jatuh_tempo->diffInDays(date('Y-m-d'));
-            if ($jatuh_tempo <= 4) {
-                $data[]  = DB::table('transaksi_nasabah')
-                    ->select(
-                        'transaksi_nasabah.*',
-                        'master_nasabah.nama',
-                    )
-                    ->join('master_nasabah', 'master_nasabah.id', '=', 'transaksi_nasabah.id_nasabah')
-                    ->where('jatuh_tempo', date('Y-m-d', strtotime('+' . $jatuh_tempo . ' days')))
-                    ->where('transaksi_nasabah.status', 1)
-                    ->get()->toArray();
-            }
+        $normalisasi = [
+            // 'nama_nasabah' => $request->nama_nasabah,
+            'C1'       => $nasabah->c1,
+            'C2'       => $nasabah->c2,
+            'C3'       => $nasabah->c3,
+            'C4'       => $nasabah->c4,
+            'C5'       => $nasabah->c5,
+        ];
+
+        $sub_text = DB::table('master_subkriteria')->get();
+        // $bobot_value = $kriteria->toArray();
+        $before = [
+            'C1_text'       => $sub_text->where('kode', 'C1')->where('nilai', $nasabah->c1)->first()->sub,
+            'C2_text'       => $sub_text->where('kode', 'C2')->where('nilai', $nasabah->c2)->first()->sub,
+            'C3_text'       => $sub_text->where('kode', 'C3')->where('nilai', $nasabah->c3)->first()->sub,
+            'C4_text'       => $sub_text->where('kode', 'C4')->where('nilai', $nasabah->c4)->first()->sub,
+            'C5_text'       => $sub_text->where('kode', 'C5')->where('nilai', $nasabah->c5)->first()->sub,
+        ];
+
+        $bobot_value = [
+            'C1'       => $kriteria->where('kode', 'C1')->value('bobot'),
+            'C2'       => $kriteria->where('kode', 'C2')->value('bobot'),
+            'C3'       => $kriteria->where('kode', 'C3')->value('bobot'),
+            'C4'       => $kriteria->where('kode', 'C4')->value('bobot'),
+            'C5'       => $kriteria->where('kode', 'C5')->value('bobot'),
+        ];
+        // dd($bobot_value);
+        $max_crips = max($crips);
+
+        foreach ($normalisasi as $key => $value) {
+            $bobot = DB::table('master_kriteria')->where('kode', $key)->value('bobot');
+            $hasil_bagi_crips[$key] = $value / $max_crips;
+            $hasil[$key] = (int)$value / (int)$max_crips * (int)$bobot;
         }
-        // dd($jangka_kredit);
-        return view('nasabah.list-jatuh-tempo', compact('data', 'jangka_kredit'));
+        $keputusan = (int)array_sum($hasil);
+        $texthasil = '';
+        if ($keputusan <= 20) {
+            $texthasil = 'Sangat Tidak Layak';
+        } else if ($keputusan <= 40) {
+            $texthasil = 'Tidak Layak';
+        } else if ($keputusan <= 60) {
+            $texthasil = 'Cukup';
+        } else if ($keputusan <= 80) {
+            $texthasil = 'Layak';
+        } else if ($keputusan <= 100) {
+            $texthasil = 'Sangat Layak';
+        }
+
+        return view('nasabah.printout', compact(
+            'transaksi',
+            'nasabah',
+            'total',
+            'keputusan',
+            'texthasil',
+            'normalisasi',
+            'max_crips',
+            'before',
+            'kriteria',
+            'bobot_value',
+            'hasil_bagi_crips'
+        ));
     }
+
+    // public function listJatuhTempo()
+    // {
+    //     $list  = DB::table('transaksi_nasabah')->get();
+    //     $data = [];
+    //     foreach ($list as $list) {
+    //         $jatuh_tempo   = Carbon::parse($list->jatuh_tempo);
+    //         $jangka_kredit = $list->jangka_kredit;
+    //         $jatuh_tempo = $jatuh_tempo->diffInDays(date('Y-m-d'));
+    //         if ($jatuh_tempo <= 4) {
+    //             $data[]  = DB::table('transaksi_nasabah')
+    //                 ->select(
+    //                     'transaksi_nasabah.*',
+    //                     'master_nasabah.nama',
+    //                 )
+    //                 ->join('master_nasabah', 'master_nasabah.id', '=', 'transaksi_nasabah.id_nasabah')
+    //                 ->where('jatuh_tempo', date('Y-m-d', strtotime('+' . $jatuh_tempo . ' days')))
+    //                 ->where('transaksi_nasabah.status', 1)
+    //                 ->get()->toArray();
+    //         }
+    //     }
+    //     // dd($jangka_kredit);
+    //     return view('nasabah.list-jatuh-tempo', compact('data', 'jangka_kredit'));
+    // }
 
     public function postPembayaran(Request $request)
     {
@@ -218,25 +285,25 @@ class KreditNasabahController extends Controller
         }
     }
 
-    public function listKreditAktif()
-    {
-        $data = DB::table('transaksi_nasabah')
-            ->select(
-                'transaksi_nasabah.*',
-                'master_nasabah.nama',
-                'master_nasabah.jenis_kelamin',
-                'master_nasabah.usia',
-                'master_nasabah.status_pernikahan',
-                'master_nasabah.alamat_nasabah',
-                'master_nasabah.nama_ibu',
-            )
-            ->join('master_nasabah', 'master_nasabah.id', '=', 'transaksi_nasabah.id_nasabah')
-            ->where('transaksi_nasabah.status', 1)
-            ->groupBy('transaksi_nasabah.id_nasabah')
-            ->get();
-        // dd($data);
-        return view('nasabah.list-kredit-aktif', compact('data'));
-    }
+    // public function listKreditAktif()
+    // {
+    //     $data = DB::table('transaksi_nasabah')
+    //         ->select(
+    //             'transaksi_nasabah.*',
+    //             'master_nasabah.nama',
+    //             'master_nasabah.jenis_kelamin',
+    //             'master_nasabah.usia',
+    //             'master_nasabah.status_pernikahan',
+    //             'master_nasabah.alamat_nasabah',
+    //             'master_nasabah.nama_ibu',
+    //         )
+    //         ->join('master_nasabah', 'master_nasabah.id', '=', 'transaksi_nasabah.id_nasabah')
+    //         ->where('transaksi_nasabah.status', 1)
+    //         ->groupBy('transaksi_nasabah.id_nasabah')
+    //         ->get();
+    //     // dd($data);
+    //     return view('nasabah.list-kredit-aktif', compact('data'));
+    // }
 
     public function tracePembayaran($id)
     {
@@ -360,22 +427,22 @@ class KreditNasabahController extends Controller
         return back();
     }
 
-    public function masterbunga()
-    {
-        $data = DB::table('master_bunga')->first();
-        return response()->json([
-            'data' => $data,
-        ]);
-    }
+    // public function masterbunga()
+    // {
+    //     $data = DB::table('master_bunga')->first();
+    //     return response()->json([
+    //         'data' => $data,
+    //     ]);
+    // }
 
-    public function updatebunga($value)
-    {
-        $data = DB::table('master_bunga')->update([
-            'bunga' => $value,
-        ]);
+    // public function updatebunga($value)
+    // {
+    //     $data = DB::table('master_bunga')->update([
+    //         'bunga' => $value,
+    //     ]);
 
-        return response()->json([
-            'data' => $data,
-        ]);
-    }
+    //     return response()->json([
+    //         'data' => $data,
+    //     ]);
+    // }
 }
