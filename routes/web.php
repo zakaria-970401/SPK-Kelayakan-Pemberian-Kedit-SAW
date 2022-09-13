@@ -28,5 +28,9 @@ Route::prefix('nasabah/')->group(
         Route::POST('postKredit', [App\Http\Controllers\KreditNasabahController::class, 'postKredit']);
         Route::get('checkNominal/{nominal}', [App\Http\Controllers\KreditNasabahController::class, 'checkNominal']);
         Route::get('printout/{id_nasabah}', [App\Http\Controllers\KreditNasabahController::class, 'printout']);
+        Route::get('list-jatuh-tempo', [App\Http\Controllers\KreditNasabahController::class, 'listJatuhTempo']);
+        Route::POST('postPembayaran', [App\Http\Controllers\KreditNasabahController::class, 'postPembayaran']);
+        Route::get('list-kredit-aktif', [App\Http\Controllers\KreditNasabahController::class, 'listKreditAktif']);
+        Route::get('tracePembayaran/{id}', [App\Http\Controllers\KreditNasabahController::class, 'tracePembayaran']);
     }
 );

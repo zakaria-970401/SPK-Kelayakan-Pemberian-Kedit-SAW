@@ -8,6 +8,7 @@ use DB;
 use Illuminate\Support\Facades\DB as FacadesDB;
 use Session;
 use carbon\Carbon;
+use Validator;
 
 class KreditNasabahController extends Controller
 {
@@ -160,37 +161,92 @@ class KreditNasabahController extends Controller
         return view('nasabah.printout', compact('transaksi', 'nasabah'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
+    public function listJatuhTempo()
     {
-        //
+        $list  = DB::table('transaksi_nasabah')->get();
+        $data = [];
+        foreach ($list as $list) {
+            $jatuh_tempo   = Carbon::parse($list->jatuh_tempo);
+            $jangka_kredit = $list->jangka_kredit;
+            $jatuh_tempo = $jatuh_tempo->diffInDays(date('Y-m-d'));
+            if ($jatuh_tempo <= 4) {
+                $data[]  = DB::table('transaksi_nasabah')
+                    ->select(
+                        'transaksi_nasabah.*',
+                        'master_nasabah.nama',
+                    )
+                    ->join('master_nasabah', 'master_nasabah.id', '=', 'transaksi_nasabah.id_nasabah')
+                    ->where('jatuh_tempo', date('Y-m-d', strtotime('+' . $jatuh_tempo . ' days')))
+                    ->where('transaksi_nasabah.status', 1)
+                    ->get()->toArray();
+            }
+        }
+        // dd($jangka_kredit);
+        return view('nasabah.list-jatuh-tempo', compact('data', 'jangka_kredit'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
+    public function postPembayaran(Request $request)
     {
-        //
+        if ($request->has('file_bukti')) {
+            $validator = Validator::make($request->all(), [
+                'file_bukti' => 'mimes:jpeg,png,jpg',
+            ]);
+
+            if ($validator->fails()) {
+                Session::flash('error', 'Foto tidak sesuai format');
+                return back();
+            } else {
+                $file_bukti = $request->file('file_bukti');
+                $file_bukti_name = $request->id . '-' . uniqid() . "." . $file_bukti->getClientOriginalExtension();
+                $file_bukti->move(public_path('/file-bukti-pembayaran'), $file_bukti_name);
+
+                DB::table('transaksi_nasabah')->where('id', $request->id)->update([
+                    'status' => 0,
+                    'file_bukti' => $file_bukti_name,
+                    'updated_at' => date('Y-m-d H:i:s'),
+                    'updated_by' => Auth::user()->name,
+                ]);
+            }
+            Session::flash('success', 'Data Berhasil Di Simpan..');
+            return back();
+        }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
+    public function listKreditAktif()
     {
-        //
+        $data = DB::table('transaksi_nasabah')
+            ->select(
+                'transaksi_nasabah.*',
+                'master_nasabah.nama',
+                'master_nasabah.jenis_kelamin',
+                'master_nasabah.usia',
+                'master_nasabah.status_pernikahan',
+                'master_nasabah.alamat_nasabah',
+                'master_nasabah.nama_ibu',
+            )
+            ->join('master_nasabah', 'master_nasabah.id', '=', 'transaksi_nasabah.id_nasabah')
+            ->where('transaksi_nasabah.status', 1)
+            ->groupBy('transaksi_nasabah.id_nasabah')
+            ->get();
+        // dd($data);
+        return view('nasabah.list-kredit-aktif', compact('data'));
+    }
+
+    public function tracePembayaran($id)
+    {
+        $id_nasabah = DB::table('transaksi_nasabah')->where('id', $id)->first()->id_nasabah;
+        $data = DB::table('transaksi_nasabah')
+            ->select(
+                'transaksi_nasabah.*',
+                'master_nasabah.nama',
+            )
+            ->join('master_nasabah', 'master_nasabah.id', '=', 'transaksi_nasabah.id_nasabah')
+            ->where('transaksi_nasabah.id_nasabah', $id_nasabah)
+            ->get();
+        // dd($data);
+
+        return response()->json([
+            'data' => $data,
+        ]);
     }
 }
