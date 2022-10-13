@@ -387,6 +387,7 @@ class KreditNasabahController extends Controller
             $rank[] = $rankedValue;
         }
         $rank = collect($rank);
+        // dd($rank);
         return view('nasabah.result-simulasi-kelayakan-kredit', compact('kriteria', 'sub_text', 'nama_nasabah', 'normalisasi', 'max_crips', 'rank'));
     }
 

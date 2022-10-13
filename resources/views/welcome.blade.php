@@ -153,7 +153,6 @@
                     data: data,
                     dataType: 'JSON',
                     success: function(response) {
-                        console.log(response.status);
                         if (response.status == 1) {
                             location.href = "{{ url('/home') }}";
                         } else {

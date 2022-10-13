@@ -249,7 +249,7 @@
                                                 <td class="bg-info text-white">{{ $hasil }}</td>
                                                 <td class="bg-info text-white">{{ $texthasil }}</td>
                                                 <td class="bg-info text-white">
-                                                    {{ $rank->where('value', $hasil)->first()['rank'] }}</td>
+                                                    {{ $rank->where('value', (int)$hasil)->first()['rank'] }}</td>
                                             </tr>
                                         @endforeach
                                     </tbody>
