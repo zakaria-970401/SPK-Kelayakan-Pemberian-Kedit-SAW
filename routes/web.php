@@ -39,7 +39,8 @@ Route::prefix('nasabah/')->group(
         Route::POST('result-simulasi-kelayakan', [App\Http\Controllers\KreditNasabahController::class, 'resultSimulasiKelayakan']);
         Route::get('permintaan-hapus-data', [App\Http\Controllers\KreditNasabahController::class, 'permintaanHapusData']);
         Route::get('sendPermintaanHapus/{id_nasabah}', [App\Http\Controllers\KreditNasabahController::class, 'sendPermintaanHapus']);
-        Route::get('approvePermintaanHapus/{id_nasabah}', [App\Http\Controllers\KreditNasabahController::class, 'approvePermintaanHapus']);
+        Route::get('tableHasilPerhitungan', [App\Http\Controllers\KreditNasabahController::class, 'tableHasilPerhitungan']);
+        Route::get('showHasilPerhitungan/{created_at}', [App\Http\Controllers\KreditNasabahController::class, 'showHasilPerhitungan']);
     }
 );
 
@@ -52,6 +53,11 @@ Route::prefix('superadmin')->group(function () {
     Route::get('/resetPassword/{id}', [App\Http\Controllers\SuperAdminController::class, 'resetPassword']);
     Route::POST('/updateUser', [App\Http\Controllers\SuperAdminController::class, 'updateUser']);
     Route::get('/menu', [App\Http\Controllers\SuperAdminController::class, 'aksesMenu']);
+    Route::get('/master_bobot', [App\Http\Controllers\SuperAdminController::class, 'masterBobot']);
+    Route::get('/editKriteria/{id}', [App\Http\Controllers\SuperAdminController::class, 'editKriteria']);
+    Route::POST('/updateKriteria', [App\Http\Controllers\SuperAdminController::class, 'updateKriteria']);
+    Route::get('/editSubKriteria/{id}', [App\Http\Controllers\SuperAdminController::class, 'editSubKriteria']);
+    Route::POST('/updatesubKriteria', [App\Http\Controllers\SuperAdminController::class, 'updatesubKriteria']);
 });
 
 Route::prefix('permission/')->group(function () {

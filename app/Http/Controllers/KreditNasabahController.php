@@ -332,7 +332,6 @@ class KreditNasabahController extends Controller
 
     public function resultSimulasiKelayakan(Request $request)
     {
-        // dd($request->all());
         $sub_text = DB::table('master_subkriteria')->get();
         $kriteria = DB::table('master_kriteria')->get();
         for ($i = 0; $i < count($request->nama_nasabah); $i++) {
@@ -379,15 +378,40 @@ class KreditNasabahController extends Controller
 
         $rankings = array_unique($hasil_hitungan);
         rsort($rankings);
+        $texthasil = '';
         $rank = array();
-        foreach ($rankings as $value) {
+        foreach ($rankings as $key => $value) {
             $rankedValue = array();
             $rankedValue['value'] = (int)$value;
             $rankedValue['rank'] = array_search($value, $rankings) + 1;
             $rank[] = $rankedValue;
+            if ($hasil_hitungan[$key] <= 20) {
+                $texthasil = 'Sangat Tidak Layak';
+            } elseif ($hasil_hitungan[$key] <= 40) {
+                $texthasil = 'Tidak Layak';
+            } elseif ($hasil_hitungan[$key] <= 60) {
+                $texthasil = 'Cukup';
+            } elseif ($hasil_hitungan[$key] <= 80) {
+                $texthasil = 'Layak';
+            } elseif ($hasil_hitungan[$key] <= 100) {
+                $texthasil = 'Sangat Layak';
+            }
+            DB::table('simulasi_kredit_nasabah')->insert([
+                'nama_nasabah' => $request->nama_nasabah[$key],
+                'c1' => $request->kedisiplinan_kredit[$key],
+                'c2' => $request->penghasilan_bulanan[$key],
+                'c3' => $request->jaminan_kredit[$key],
+                'c4' => $request->status_tempat_tinggal[$key],
+                'c5' => $request->status_pekerjaan[$key],
+                'rangking' => $rankedValue['rank'],
+                'hasil' => $hasil_hitungan[$key],
+                'keterangan' => $texthasil,
+                'created_at' => date('Y-m-d H:i:s'),
+                'created_by' => Auth::user()->name,
+            ]);
         }
         $rank = collect($rank);
-        // dd($rank);
+
         return view('nasabah.result-simulasi-kelayakan-kredit', compact('kriteria', 'sub_text', 'nama_nasabah', 'normalisasi', 'max_crips', 'rank'));
     }
 
@@ -428,22 +452,60 @@ class KreditNasabahController extends Controller
         return back();
     }
 
-    // public function masterbunga()
-    // {
-    //     $data = DB::table('master_bunga')->first();
-    //     return response()->json([
-    //         'data' => $data,
-    //     ]);
-    // }
+    public function tableHasilPerhitungan()
+    {
+        $data = DB::table('simulasi_kredit_nasabah')->groupBy('created_at')->get();
 
-    // public function updatebunga($value)
-    // {
-    //     $data = DB::table('master_bunga')->update([
-    //         'bunga' => $value,
-    //     ]);
+        return view('nasabah.hasil_perhitungan', compact('data'));
+    }
 
-    //     return response()->json([
-    //         'data' => $data,
-    //     ]);
-    // }
+    public function showHasilPerhitungan($created_at)
+    {
+        $data = DB::table('simulasi_kredit_nasabah')->orderBy('rangking', 'ASC')->where('created_at', $created_at)->get();
+
+        $sub_text = DB::table('master_subkriteria')->get();
+        $kriteria = DB::table('master_kriteria')->get();
+        for ($i = 0; $i < count($data); $i++) {
+            $crips[] = [
+                $data[$i]->c1,
+                $data[$i]->c2,
+                $data[$i]->c3,
+                $data[$i]->c4,
+                $data[$i]->c5,
+            ];
+
+            $normalisasi_before[] = [
+                'C1'       =>   $data[$i]->c1,
+                'C2'       =>  $data[$i]->c2,
+                'C3'       =>   $data[$i]->c3,
+                'C4'       =>   $data[$i]->c4,
+                'C5'       =>   $data[$i]->c5,
+            ];
+        }
+
+        foreach ($normalisasi_before as $key => $value) {
+            foreach ($value as $_key => $_value) {
+                $normalisasi[$_key][] = $_value;
+            }
+        }
+        $normalisasi = collect($normalisasi);
+        $max_crips = collect([]);
+        $nama_nasabah = collect([]);
+        $sub_text_after = collect([]);
+
+        foreach ($crips as $key => $value) {
+            $max_crips = $max_crips->merge($value);
+        }
+        $max_crips = max($max_crips->toArray());
+
+        foreach ($data as $key => $value) {
+            $nama_nasabah[] = $value->nama_nasabah;
+            $hasil = 0;
+            for ($i = 1; $i <= 5; $i++) {
+                $hasil += $normalisasi['C' . $i][$key] / $max_crips * $kriteria->where('kode', 'C' . $i)->first()->bobot;
+            }
+            $hasil_hitungan[] = $hasil;
+        }
+        return view('nasabah.show-hasil-perhitungan', compact('data', 'max_crips', 'kriteria', 'hasil', 'sub_text', 'normalisasi'));
+    }
 }

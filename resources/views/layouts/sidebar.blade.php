@@ -146,17 +146,17 @@ $permission = DB::table('auth_group_permission')
                         </a>
                     </div>
                 </div>
-                {{-- <div class="menu-item">
-                    <a class="menu-link" href="javascript:void(0)" onclick="masterBunga()">
+                <div class="menu-item">
+                    <a class="menu-link" href="{{ url('superadmin/master_bobot') }}">
                         <span class="menu-icon">
                             <span class="svg-icon svg-icon-2">
-                                <i>%</i>
+                                <i class="fas fa-database"></i>
                             </span>
                         </span>
-                        <span class="menu-title">Setting Bunga
+                        <span class="menu-title">Master Bobot
                         </span>
                     </a>
-                </div> --}}
+                </div>
             </div>
         @endif
         @if (in_array('permintaan_hapus_data', $permission))
@@ -198,6 +198,16 @@ $permission = DB::table('auth_group_permission')
                         </span>
                     </span>
                     <span class="menu-title">Report</span>
+                </a>
+            </div>
+            <div class="menu-item">
+                <a class="menu-link" href="{{ url('nasabah/tableHasilPerhitungan') }}">
+                    <span class="menu-icon">
+                        <span class="svg-icon svg-icon-2">
+                            <i class="fas fa-table"></i>
+                        </span>
+                    </span>
+                    <span class="menu-title">Table Hasil Perhitungan</span>
                 </a>
             </div>
         @endif

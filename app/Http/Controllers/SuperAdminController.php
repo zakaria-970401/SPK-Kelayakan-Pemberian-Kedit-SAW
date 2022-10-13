@@ -119,4 +119,49 @@ class SuperAdminController extends Controller
             ],
         ]);
     }
+
+    public function masterBobot()
+    {
+        $kriteria = DB::table('master_kriteria')->get();
+        $sub      = DB::table('master_subkriteria')->get();
+        return view('super_admin.master_bobot', compact('kriteria', 'sub'));
+    }
+
+    public function editKriteria($id)
+    {
+        $data = DB::table('master_kriteria')->where('id', $id)->first();
+
+        return response()->json([
+            'data' => $data,
+        ]);
+    }
+
+    public function updateKriteria(Request $request)
+    {
+        DB::table('master_kriteria')->where('id', $request->idKriteria)->update([
+            'kriteria' => $request->kriteria,
+            'bobot' => $request->bobot,
+        ]);
+        Session::flash('success', 'Data berhasil di Update');
+        return back();
+    }
+
+    public function editSubKriteria($id)
+    {
+        $data = DB::table('master_subkriteria')->where('id', $id)->first();
+
+        return response()->json([
+            'data' => $data,
+        ]);
+    }
+
+    public function updatesubKriteria(Request $request)
+    {
+        DB::table('master_subkriteria')->where('id', $request->idsub)->update([
+            'sub' => $request->value,
+            'nilai' => $request->nilai,
+        ]);
+        Session::flash('success', 'Data berhasil di Update');
+        return back();
+    }
 }

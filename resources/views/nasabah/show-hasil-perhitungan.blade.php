@@ -22,10 +22,10 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($nama_nasabah as $key => $item)
+                                    @foreach ($data as $key => $item)
                                         <tr class="text-center">
                                             <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $item }}</td>
+                                            <td>{{ $item->nama_nasabah }}</td>
                                             <td>{{ $sub_text->where('kode', 'C1')->where('nilai', $normalisasi['C1'][$key])->first()->sub }}
                                             </td>
                                             <td>{{ $sub_text->where('kode', 'C2')->where('nilai', $normalisasi['C2'][$key])->first()->sub }}
@@ -60,10 +60,10 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($nama_nasabah as $key => $item)
+                                    @foreach ($data as $key => $item)
                                         <tr class="text-center">
                                             <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $item }}</td>
+                                            <td>{{ $item->nama_nasabah }}</td>
                                             <td>{{ $normalisasi['C1'][$key] }}</td>
                                             <td>{{ $normalisasi['C2'][$key] }}</td>
                                             <td>{{ $normalisasi['C3'][$key] }}</td>
@@ -96,7 +96,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($nama_nasabah as $key => $item)
+                                    @foreach ($data as $key => $item)
                                         @php
                                             $hasil_bagi[] = [
                                                 'C1' => $normalisasi['C1'][$key] / $max_crips,
@@ -108,7 +108,7 @@
                                         @endphp
                                         <tr class="text-center">
                                             <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $item }}</td>
+                                            <td>{{ $item->nama_nasabah }}</td>
                                             <td>{{ $normalisasi['C1'][$key] }} / {{ $max_crips }} =
                                                 {{ $normalisasi['C1'][$key] / $max_crips }}
                                             </td>
@@ -144,10 +144,10 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($nama_nasabah as $key => $item)
+                                    @foreach ($data as $key => $item)
                                         <tr class="text-center">
                                             <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $item }}</td>
+                                            <td>{{ $item->nama_nasabah }}</td>
                                             <td>
                                                 {{ $normalisasi['C1'][$key] / $max_crips }}
                                             </td>
@@ -216,28 +216,13 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($nama_nasabah as $key => $item)
+                                        @foreach ($data as $key => $item)
                                             <tr class="text-center">
-                                                <td>{{ $item }}</td>
+                                                <td>{{ $item->nama_nasabah }}</td>
                                                 @php
                                                     $hasil = 0;
                                                 @endphp
                                                 @for ($i = 1; $i <= 5; $i++)
-                                                    @php
-                                                        $hasil += $hasil_bagi[$key]['C' . $i] * $kriteria->where('kode', 'C' . $i)->first()->bobot;
-                                                        $texthasil = '';
-                                                        if ($hasil <= 20) {
-                                                            $texthasil = 'Sangat Tidak Layak';
-                                                        } elseif ($hasil <= 40) {
-                                                            $texthasil = 'Tidak Layak';
-                                                        } elseif ($hasil <= 60) {
-                                                            $texthasil = 'Cukup';
-                                                        } elseif ($hasil <= 80) {
-                                                            $texthasil = 'Layak';
-                                                        } elseif ($hasil <= 100) {
-                                                            $texthasil = 'Sangat Layak';
-                                                        }
-                                                    @endphp
                                                     <td>
                                                         {{ $hasil_bagi[$key]['C' . $i] }} *
                                                         {{ $kriteria->where('kode', 'C' . $i)->first()->bobot }} =
@@ -246,21 +231,15 @@
                                                         </b>
                                                     </td>
                                                 @endfor
-                                                <td class="bg-info text-white">{{ $hasil }}</td>
-                                                <td class="bg-info text-white">{{ $texthasil }}</td>
-                                                <td class="bg-info text-white">
-                                                    {{ $rank->where('value', (int) $hasil)->first()['rank'] }}</td>
+                                                <td class="bg-info text-white">{{ $item->hasil }}</td>
+                                                <td class="bg-info text-white">{{ $item->keterangan }}</td>
+                                                <td class="bg-info text-white">{{ $item->rangking }}</td>
                                             </tr>
                                         @endforeach
                                     </tbody>
                                 </table>
                             </div>
                         </div>
-                    </div>
-                    <div class="float-end">
-                        <a href="{{ url('nasabah/simulasi-kelayakan') }}" class="btn btn-lg btn-info"><i
-                                class="fas fa-check-circle"></i> OK
-                        </a>
                     </div>
                 </div>
             </div>
