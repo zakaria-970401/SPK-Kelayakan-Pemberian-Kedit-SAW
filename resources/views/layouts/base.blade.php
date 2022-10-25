@@ -51,6 +51,14 @@
             background-color: #079b65;
             color: white;
         }
+        @media print
+        {    
+            .no-print, .no-print *
+            {
+                display: none !important;
+            }
+            body {-webkit-print-color-adjust: exact;}
+        }
     </style>
 </head>
 <!--end::Head-->
@@ -85,7 +93,7 @@
             <!--begin::Wrapper-->
             <div class="wrapper d-flex flex-column flex-row-fluid" id="kt_wrapper">
                 <!--begin::Header-->
-                <div id="kt_header" class="header" data-kt-sticky="true" data-kt-sticky-name="header"
+                <div id="kt_header" class="header no-print" data-kt-sticky="true" data-kt-sticky-name="header"
                     data-kt-sticky-animation="false" data-kt-sticky-offset="{default: '200px', lg: '300px'}">
                     <!--begin::Container-->
                     <div class="container-xxl d-flex align-items-center flex-lg-stack">
@@ -203,7 +211,7 @@
                         @yield('content')
                     </div>
                 </div>
-                <div class="footer pb-4 d-flex flex-lg-column" id="kt_footer">
+                <div class="footer pb-4 d-flex flex-lg-column no-print" id="kt_footer">
                     <div
                         class="container-xxl d-flex flex-column flex-md-row align-items-center justify-content-between">
                         <div class="text-dark order-2 order-md-1">

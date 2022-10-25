@@ -212,7 +212,7 @@
                                             @endforeach
                                             <th class="bg-info text-white">HASIL</th>
                                             <th class="bg-info text-white">KETERANGAN</th>
-                                            <th class="bg-info text-white">RANGKING</th>
+                                            {{-- <th class="bg-info text-white">RANGKING</th> --}}
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -233,7 +233,7 @@
                                                 @endfor
                                                 <td class="bg-info text-white">{{ $item->hasil }}</td>
                                                 <td class="bg-info text-white">{{ $item->keterangan }}</td>
-                                                <td class="bg-info text-white">{{ $item->rangking }}</td>
+                                                {{-- <td class="bg-info text-white">{{ $item->rangking }}</td> --}}
                                             </tr>
                                         @endforeach
                                     </tbody>

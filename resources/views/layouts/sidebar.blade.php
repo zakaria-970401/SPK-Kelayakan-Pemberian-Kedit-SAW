@@ -34,7 +34,7 @@ $permission = DB::table('auth_group_permission')
         @if (in_array('menu_nasabah', $permission))
             <div class="menu-item">
                 <div class="menu-content pt-8 pb-2">
-                    <span class="menu-section text-muted text-uppercase fs-8 ls-1">Menu Nasabah</span>
+                    <span class="menu-section text-muted text-uppercase fs-8 ls-1">Perhitungan SAW</span>
                 </div>
             </div>
             <div data-kt-menu-trigger="click" class="menu-item menu-accordion">
@@ -48,14 +48,14 @@ $permission = DB::table('auth_group_permission')
                     <span class="menu-arrow"></span>
                 </span>
                 <div class="menu-sub menu-sub-accordion menu-active-bg">
-                    <div class="menu-item">
+                    {{-- <div class="menu-item">
                         <a class="menu-link" href="{{ url('nasabah/pengajuan-kredit') }}">
                             <span class="menu-bullet">
                                 <span class="bullet bullet-dot"></span>
                             </span>
                             <span class="menu-title">Perhitungan Kelayakan Kredit</span>
                         </a>
-                    </div>
+                    </div> --}}
                 </div>
                 {{-- <div class="menu-sub menu-sub-accordion menu-active-bg">
                     <div class="menu-item">
@@ -78,14 +78,14 @@ $permission = DB::table('auth_group_permission')
                     </div>
                 </div> --}}
                 <div class="menu-sub menu-sub-accordion menu-active-bg">
-                    <div class="menu-item">
+                    {{-- <div class="menu-item">
                         <a class="menu-link" href="{{ url('nasabah/permintaan-hapus-data') }}">
                             <span class="menu-bullet">
                                 <span class="bullet bullet-dot"></span>
                             </span>
                             <span class="menu-title">Permintaan Hapus Data</span>
                         </a>
-                    </div>
+                    </div> --}}
                 </div>
                 <div class="menu-sub menu-sub-accordion menu-active-bg">
                     <div class="menu-item">
@@ -93,7 +93,7 @@ $permission = DB::table('auth_group_permission')
                             <span class="menu-bullet">
                                 <span class="bullet bullet-dot"></span>
                             </span>
-                            <span class="menu-title">Simulasi Kelayakan Kredit</span>
+                            <span class="menu-title">Perhitungan SAW</span>
                         </a>
                     </div>
                 </div>
@@ -127,7 +127,7 @@ $permission = DB::table('auth_group_permission')
                 </div>
             </div>
             <div data-kt-menu-trigger="click" class="menu-item menu-accordion">
-                <span class="menu-link">
+                {{-- <span class="menu-link">
                     <span class="menu-icon">
                         <span class="svg-icon svg-icon-2">
                             <i class="fas fa-desktop"></i>
@@ -135,8 +135,8 @@ $permission = DB::table('auth_group_permission')
                     </span>
                     <span class="menu-title">Master Menu</span>
                     <span class="menu-arrow"></span>
-                </span>
-                <div class="menu-sub menu-sub-accordion">
+                </span> --}}
+                {{-- <div class="menu-sub menu-sub-accordion">
                     <div class="menu-item">
                         <a class="menu-link" href="{{ url('superadmin/menu') }}">
                             <span class="menu-bullet">
@@ -145,7 +145,7 @@ $permission = DB::table('auth_group_permission')
                             <span class="menu-title">Management Akses Menu</span>
                         </a>
                     </div>
-                </div>
+                </div> --}}
                 <div class="menu-item">
                     <a class="menu-link" href="{{ url('superadmin/master_bobot') }}">
                         <span class="menu-icon">
@@ -153,13 +153,13 @@ $permission = DB::table('auth_group_permission')
                                 <i class="fas fa-database"></i>
                             </span>
                         </span>
-                        <span class="menu-title">Master Bobot
+                        <span class="menu-title">Kelola Bobot Kriteria
                         </span>
                     </a>
                 </div>
             </div>
         @endif
-        @if (in_array('permintaan_hapus_data', $permission))
+        {{-- @if (in_array('permintaan_hapus_data', $permission))
             <div class="menu-item">
                 <div class="menu-content pt-8 pb-0">
                     <span class="menu-section text-muted text-uppercase fs-8 ls-1">PERMINTAAN HAPUS DATA</span>
@@ -183,14 +183,14 @@ $permission = DB::table('auth_group_permission')
                     </span>
                 </a>
             </div>
-        @endif
+        @endif --}}
         @if (in_array('report', $permission))
             <div class="menu-item">
                 <div class="menu-content pt-8 pb-0">
                     <span class="menu-section text-muted text-uppercase fs-8 ls-1">REPORT</span>
                 </div>
             </div>
-            <div class="menu-item">
+            {{-- <div class="menu-item">
                 <a class="menu-link" href="{{ url('report') }}">
                     <span class="menu-icon">
                         <span class="svg-icon svg-icon-2">
@@ -199,7 +199,7 @@ $permission = DB::table('auth_group_permission')
                     </span>
                     <span class="menu-title">Report</span>
                 </a>
-            </div>
+            </div> --}}
             <div class="menu-item">
                 <a class="menu-link" href="{{ url('nasabah/tableHasilPerhitungan') }}">
                     <span class="menu-icon">
@@ -207,7 +207,7 @@ $permission = DB::table('auth_group_permission')
                             <i class="fas fa-table"></i>
                         </span>
                     </span>
-                    <span class="menu-title">Table Hasil Perhitungan</span>
+                    <span class="menu-title">Report</span>
                 </a>
             </div>
         @endif
