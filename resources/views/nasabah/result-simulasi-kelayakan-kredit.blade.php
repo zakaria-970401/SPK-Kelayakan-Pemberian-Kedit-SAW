@@ -110,19 +110,19 @@
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $item }}</td>
                                             <td>{{ $normalisasi['C1'][$key] }} / {{ $max_crips }} =
-                                                {{ $normalisasi['C1'][$key] / $max_crips }}
+                                                {{ number_format($normalisasi['C1'][$key] / $max_crips, 2) }}
                                             </td>
                                             <td>{{ $normalisasi['C2'][$key] }} / {{ $max_crips }} =
-                                                {{ $normalisasi['C2'][$key] / $max_crips }}
+                                                {{ number_format($normalisasi['C2'][$key] / $max_crips, 2) }}
                                             </td>
                                             <td>{{ $normalisasi['C3'][$key] }} / {{ $max_crips }} =
-                                                {{ $normalisasi['C3'][$key] / $max_crips }}
+                                                {{ number_format($normalisasi['C3'][$key] / $max_crips, 2) }}
                                             </td>
                                             <td>{{ $normalisasi['C4'][$key] }} / {{ $max_crips }} =
-                                                {{ $normalisasi['C4'][$key] / $max_crips }}
+                                                {{ number_format($normalisasi['C4'][$key] / $max_crips, 2) }}
                                             </td>
                                             <td>{{ $normalisasi['C5'][$key] }} / {{ $max_crips }} =
-                                                {{ $normalisasi['C5'][$key] / $max_crips }}
+                                                {{ number_format($normalisasi['C5'][$key] / $max_crips, 2) }}
                                             </td>
                                         </tr>
                                     @endforeach
@@ -149,19 +149,19 @@
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $item }}</td>
                                             <td>
-                                                {{ $normalisasi['C1'][$key] / $max_crips }}
+                                                {{ number_format($normalisasi['C1'][$key] / $max_crips, 2) }}
                                             </td>
                                             <td>
-                                                {{ $normalisasi['C2'][$key] / $max_crips }}
+                                                {{ number_format($normalisasi['C2'][$key] / $max_crips, 2) }}
                                             </td>
                                             <td>
-                                                {{ $normalisasi['C3'][$key] / $max_crips }}
+                                                {{ number_format($normalisasi['C3'][$key] / $max_crips, 2) }}
                                             </td>
                                             <td>
-                                                {{ $normalisasi['C4'][$key] / $max_crips }}
+                                                {{ number_format($normalisasi['C4'][$key] / $max_crips, 2) }}
                                             </td>
                                             <td>
-                                                {{ $normalisasi['C5'][$key] / $max_crips }}
+                                                {{ number_format($normalisasi['C5'][$key] / $max_crips, 2) }}
                                             </td>
                                         </tr>
                                     @endforeach
@@ -224,7 +224,8 @@
                                                 @endphp
                                                 @for ($i = 1; $i <= 5; $i++)
                                                     @php
-                                                        $hasil += $hasil_bagi[$key]['C' . $i] * $kriteria->where('kode', 'C' . $i)->first()->bobot;
+                                                        $hasil += number_format($hasil_bagi[$key]['C' . $i] * $kriteria->where('kode', 'C' . $i)->first()->bobot, 2);
+                                                        
                                                         $texthasil = '';
                                                         if ($hasil <= 20) {
                                                             $texthasil = 'Sangat Tidak Layak';
@@ -239,10 +240,10 @@
                                                         }
                                                     @endphp
                                                     <td>
-                                                        {{ $hasil_bagi[$key]['C' . $i] }} *
+                                                        {{ number_format($hasil_bagi[$key]['C' . $i], 2) }} *
                                                         {{ $kriteria->where('kode', 'C' . $i)->first()->bobot }} =
                                                         <b>
-                                                            {{ $hasil_bagi[$key]['C' . $i] * $kriteria->where('kode', 'C' . $i)->first()->bobot }}
+                                                            {{ number_format($hasil_bagi[$key]['C' . $i] * $kriteria->where('kode', 'C' . $i)->first()->bobot, 2) }}
                                                         </b>
                                                     </td>
                                                 @endfor
@@ -258,7 +259,7 @@
                         </div>
                     </div>
                     <div class="float-end">
-                        <a href="{{ url('nasabah/simulasi-kelayakan') }}" class="btn btn-lg btn-info"><i
+                        <a href="javascript:void(0)" onclick="window.print()" class="btn btn-lg btn-info no-print"><i
                                 class="fas fa-check-circle"></i> OK
                         </a>
                     </div>
