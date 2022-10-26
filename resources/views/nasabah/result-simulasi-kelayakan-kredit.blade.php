@@ -129,7 +129,7 @@
                                 </tbody>
                             </table>
                             <hr>
-                            <table id="table">
+                            {{-- <table id="table">
                                 <thead>
                                     <tr class="text-center">
                                         <th colspan="6"><b>HASIL NORMALISASI </b></th>
@@ -166,7 +166,7 @@
                                         </tr>
                                     @endforeach
                                 </tbody>
-                            </table>
+                            </table> --}}
                             <hr>
                         </div>
                     </div>
