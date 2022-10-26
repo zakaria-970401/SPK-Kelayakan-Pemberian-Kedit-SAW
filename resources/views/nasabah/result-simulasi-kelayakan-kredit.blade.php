@@ -212,7 +212,7 @@
                                             @endforeach
                                             <th class="bg-info text-white">HASIL</th>
                                             <th class="bg-info text-white">KETERANGAN</th>
-                                            <th class="bg-info text-white">RANGKING</th>
+                                            {{-- <th class="bg-info text-white">RANGKING</th> --}}
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -248,8 +248,8 @@
                                                 @endfor
                                                 <td class="bg-info text-white">{{ $hasil }}</td>
                                                 <td class="bg-info text-white">{{ $texthasil }}</td>
-                                                <td class="bg-info text-white">
-                                                    {{ $rank->where('value', (int) $hasil)->first()['rank'] }}</td>
+                                                {{-- <td class="bg-info text-white">
+                                                    {{ $rank->where('value', (int) $hasil)->first()['rank'] }}</td> --}}
                                             </tr>
                                         @endforeach
                                     </tbody>
