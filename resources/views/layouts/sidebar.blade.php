@@ -1,9 +1,9 @@
 @php
-$permission = DB::table('auth_group_permission')
-    ->join('auth_permission', 'auth_permission.id', '=', 'auth_group_permission.permission_id')
-    ->where('auth_group_permission.group_id', Auth::user()->auth_group)
-    ->pluck('auth_permission.name')
-    ->toArray();
+    $permission = DB::table('auth_group_permission')
+        ->join('auth_permission', 'auth_permission.id_permission', '=', 'auth_group_permission.permission_id')
+        ->where('auth_group_permission.group_id', Auth::user()->auth_group)
+        ->pluck('auth_permission.name')
+        ->toArray();
 @endphp
 <div class="hover-scroll-overlay-y my-5 me-n4 pe-4" id="kt_aside_menu_wrapper" data-kt-scroll="true"
     data-kt-scroll-activate="true" data-kt-scroll-height="auto" data-kt-scroll-dependencies="#kt_aside_footer"
@@ -215,36 +215,36 @@ $permission = DB::table('auth_group_permission')
 </div>
 
 <script>
-    function masterBunga() {
-        $.ajax({
-            url: "{{ url('masterbunga') }}",
-            type: 'GET',
-            dataType: 'json',
-            success: function(response) {
-                Swal.fire({
-                    title: "Bunga Saat ini " + response.data.bunga + "%",
-                    input: 'number',
-                    showCancelButton: true
-                }).then((result) => {
-                    if (result.value) {
-                        $.ajax({
-                            url: "{{ url('updatebunga') }}/" + result.value,
-                            type: 'GET',
-                            dataType: 'json',
-                            success: function(response) {
-                                Swal.fire({
-                                    title: "Success",
-                                    text: "Bunga Berhasil Di ubah menjadi " +
-                                        result.value + "%",
-                                    icon: 'success',
-                                }).then((result) => {
-                                    location.reload()
-                                });
-                            }
-                        })
-                    }
-                });
-            }
-        })
-    }
+    // function masterBunga() {
+    //     $.ajax({
+    //         url: "{{ url('masterbunga') }}",
+    //         type: 'GET',
+    //         dataType: 'json',
+    //         success: function(response) {
+    //             Swal.fire({
+    //                 title: "Bunga Saat ini " + response.data.bunga + "%",
+    //                 input: 'number',
+    //                 showCancelButton: true
+    //             }).then((result) => {
+    //                 if (result.value) {
+    //                     $.ajax({
+    //                         url: "{{ url('updatebunga') }}/" + result.value,
+    //                         type: 'GET',
+    //                         dataType: 'json',
+    //                         success: function(response) {
+    //                             Swal.fire({
+    //                                 title: "Success",
+    //                                 text: "Bunga Berhasil Di ubah menjadi " +
+    //                                     result.value + "%",
+    //                                 icon: 'success',
+    //                             }).then((result) => {
+    //                                 location.reload()
+    //                             });
+    //                         }
+    //                     })
+    //                 }
+    //             });
+    //         }
+    //     })
+    // }
 </script>

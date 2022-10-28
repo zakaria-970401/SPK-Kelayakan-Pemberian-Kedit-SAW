@@ -64,10 +64,10 @@ class PermissionController extends Controller
     {
         //delete
         DB::table('auth_group_permission')->where('group_id', $request->auth_group_id)->delete();
-        $auth_group  =  DB::table('auth_group')->select('id')->where('id', $request->auth_group_id)->first();
+        $auth_group  =  DB::table('auth_group')->select('id_group')->where('id_group', $request->auth_group_id)->first();
 
         foreach ($request->list_menu as $list) {
-            $auth_permission  =  DB::table('auth_permission')->select('id')->where('name', $list)->first();
+            $auth_permission  =  DB::table('auth_permission')->select('id_permission')->where('name', $list)->first();
             DB::table('auth_group_permission')->insert([
                 'group_id' => $auth_group->id,
                 'permission_id' => $auth_permission->id,
@@ -87,8 +87,8 @@ class PermissionController extends Controller
      */
     public function lihat_permission($id)
     {
-        $auth_group = DB::table('auth_group')->where('id', $id)->first();
-        $permission = DB::table('auth_permission')->get()->pluck('id')->toArray();
+        $auth_group = DB::table('auth_group')->where('id_group', $id)->first();
+        $permission = DB::table('auth_permission')->get()->pluck('id_permission')->toArray();
 
         $list_exist = DB::table('auth_permission')
             ->join('auth_group_permission', 'auth_group_permission.permission_id', '=', 'auth_permission.id')
@@ -103,7 +103,7 @@ class PermissionController extends Controller
         $list = array_diff($permission, $list);
         $list_kosong = [];
         foreach ($list as $_val) {
-            $list_kosong[] = DB::table('auth_permission')->where('id', $_val)->get();
+            $list_kosong[] = DB::table('auth_permission')->where('id_permission', $_val)->get();
         }
 
         return response()->json([
@@ -149,13 +149,13 @@ class PermissionController extends Controller
     public function hapus_permission($kategori, $id)
     {
         if ($kategori == 'permission') {
-            DB::table('auth_permission')->where('id', $id)->delete();
+            DB::table('auth_permission')->where('id_permission', $id)->delete();
             DB::table('auth_group_permission')->where('permission_id', $id)->delete();
 
             Session::flash('success', 'Permission Berhasil Di Hapus');
             return back();
         } else {
-            DB::table('auth_group')->where('id', $id)->delete();
+            DB::table('auth_group')->where('id_group', $id)->delete();
             DB::table('auth_group_permission')->where('group_id', $id)->delete();
 
             Session::flash('success', 'Permission Berhasil Di Hapus');
@@ -166,7 +166,7 @@ class PermissionController extends Controller
     public function update_permission($kategori, $nama, $id)
     {
         if ($kategori == 'permission') {
-            DB::table('auth_permission')->where('id', $id)->update(
+            DB::table('auth_permission')->where('id_permission', $id)->update(
                 [
                     'name' => $nama
                 ]
@@ -175,7 +175,7 @@ class PermissionController extends Controller
             Session::flash('success', 'Permission Berhasil Di Update');
             return back();
         } else {
-            DB::table('auth_group')->where('id', $id)->update(
+            DB::table('auth_group')->where('id_group', $id)->update(
                 [
                     'name' => $nama
                 ]

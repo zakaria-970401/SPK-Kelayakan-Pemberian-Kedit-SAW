@@ -41,7 +41,7 @@ class SuperAdminController extends Controller
     public function showUser($id)
     {
         $data = DB::table('users')
-            ->join('auth_group', 'users.auth_group', '=', 'auth_group.id')
+            ->join('auth_group', 'users.auth_group', '=', 'auth_group.id_group')
             ->select('users.*', 'auth_group.name as group_name')
             ->where('users.id', $id)
             ->first();
@@ -90,23 +90,23 @@ class SuperAdminController extends Controller
 
     public function showMenu($id)
     {
-        $auth_group = DB::table('auth_group')->where('id', $id)->first();
-        $permission = DB::table('auth_permission')->get()->pluck('id')->toArray();
+        $auth_group = DB::table('auth_group')->where('id_group', $id)->first();
+        $permission = DB::table('auth_permission')->get()->pluck('id_permission')->toArray();
 
         $list_exist = DB::table('auth_permission')
-            ->join('auth_group_permission', 'auth_group_permission.permission_id', '=', 'auth_permission.id')
+            ->join('auth_group_permission', 'auth_group_permission.permission_id', '=', 'auth_permission.id_permission')
             ->where('group_id', $auth_group->id)
             ->get();
 
         $list = DB::table('auth_permission')
-            ->join('auth_group_permission', 'auth_group_permission.permission_id', '=', 'auth_permission.id')
+            ->join('auth_group_permission', 'auth_group_permission.permission_id', '=', 'auth_permission.id_permission')
             ->where('group_id', $auth_group->id)
             ->get()->pluck('permission_id')->toArray();;
 
         $list = array_diff($permission, $list);
         $list_kosong = [];
         foreach ($list as $_val) {
-            $list_kosong[] = DB::table('auth_permission')->where('id', $_val)->get();
+            $list_kosong[] = DB::table('auth_permission')->where('id_permission', $_val)->get();
         }
 
         return response()->json([
@@ -129,7 +129,7 @@ class SuperAdminController extends Controller
 
     public function editKriteria($id)
     {
-        $data = DB::table('master_kriteria')->where('id', $id)->first();
+        $data = DB::table('master_kriteria')->where('id_kriteria', $id)->first();
 
         return response()->json([
             'data' => $data,
@@ -138,7 +138,7 @@ class SuperAdminController extends Controller
 
     public function updateKriteria(Request $request)
     {
-        DB::table('master_kriteria')->where('id', $request->idKriteria)->update([
+        DB::table('master_kriteria')->where('id_kriteria', $request->idKriteria)->update([
             'kriteria' => $request->kriteria,
             'bobot' => $request->bobot,
         ]);
@@ -148,7 +148,7 @@ class SuperAdminController extends Controller
 
     public function editSubKriteria($id)
     {
-        $data = DB::table('master_subkriteria')->where('id', $id)->first();
+        $data = DB::table('master_subkriteria')->where('id_subkriteria', $id)->first();
 
         return response()->json([
             'data' => $data,
@@ -157,7 +157,7 @@ class SuperAdminController extends Controller
 
     public function updatesubKriteria(Request $request)
     {
-        DB::table('master_subkriteria')->where('id', $request->idsub)->update([
+        DB::table('master_subkriteria')->where('id_subkriteria', $request->idsub)->update([
             'sub' => $request->value,
             'nilai' => $request->nilai,
         ]);
